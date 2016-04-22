@@ -1,6 +1,19 @@
 from flask import Flask
 from flask import request
 from flask import json
+import sqlite3
+
+def createTables():
+    db.executescript(open("./database/tables.sql").read())
+    conndb.commit()
+
+conndb=sqlite3.connect("./database/aitd.db")
+db=conndb.cursor()
+#createTables()
+
+def insertAluno(nome,nacionalidade,idade):
+    db.execute("INSERT INTO alunos (nome, nacionalidade, idade) VALUES (?,?,?)",(nome,nacionalidade,idade))
+    conndb.commit()
 
 app = Flask(__name__)
 
@@ -8,24 +21,6 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
     return 'Hello World!'
-
-
-@app.route('/echo', methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
-def api_echo():
-    if request.method == 'GET':
-        return "ECHO: GET\n"
-
-    elif request.method == 'POST':
-        return "ECHO: POST\n"
-
-    elif request.method == 'PATCH':
-        return "ECHO: PATCH\n"
-
-    elif request.method == 'PUT':
-        return "ECHO: PUT\n"
-
-    elif request.method == 'DELETE':
-        return "ECHO: DELETE"
 
 
 @app.route('/messages', methods=['POST'])
@@ -42,7 +37,6 @@ def api_message():
         f.write(request.data)
         f.close()
         return "Binary message written!"
-
     else:
         return "415 Unsupported Media Type ;)"
 
