@@ -6,9 +6,9 @@ def createTables():
     db.executescript(open("./database/tables.sql").read())
     conndb.commit()
 
-conndb=sqlite3.connect("./database/aitd.db")
-db=conndb.cursor()
-#createTables()
+conndb = sqlite3.connect("./database/aitd.db")
+db = conndb.cursor()
+# createTables()
 
 
 def insertAluno(nome,nacionalidade,idade):
@@ -17,13 +17,13 @@ def insertAluno(nome,nacionalidade,idade):
 
 
 def handler(test):
-    request=json.loads(test)
-    response=''
-    if request['cmd']=='ADD':
-        insertAluno(request['nome'],request['nacionalidade'],request['idade'])
-        response=json.dumps('OK BABY')
+    request = json.loads(test)
+    response = ''
+    if request['cmd'] == 'ADD':
+        insertAluno(request['nome'], request['nacionalidade'], request['idade'])
+        response = json.dumps('OK BABY')
     else:
-        response=json.dumps('NOT OK BABT')
+        response = json.dumps('NOT OK BABT')
     return response
 
 
