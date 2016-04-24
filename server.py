@@ -86,7 +86,7 @@ def disciplinas_api(path):
     return resp
 
 
-@app.route("/disciplinas", methods=["POST"])
+@app.route("/inscricoes", methods=["POST"])
 def incricoes_api():
 
     data = json.loads(request.data, object_pairs_hook=OrderedDict)
