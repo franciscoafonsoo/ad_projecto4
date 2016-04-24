@@ -1,7 +1,6 @@
 from flask import Flask
 from flask import request
 from flask import json
-import sqlite3
 import skel
 import json
 from collections import OrderedDict
@@ -9,10 +8,10 @@ from collections import OrderedDict
 app = Flask(__name__)
 
 
-
 @app.route('/')
 def hello_world():
     return {"Hello": "World"}
+
 
 @app.route('/messages', methods=['POST'])
 def api_message():
@@ -31,37 +30,79 @@ def api_message():
     else:
         return "415 Unsupported Media Type ;)"
 
+
 @app.route("/alunos", methods=["POST"])
 def alunos_api():
 
-    print request.path
-    print json.loads(request.data, object_pairs_hook=OrderedDict)
-    return "Ok"
+    data = json.loads(request.data, object_pairs_hook=OrderedDict)
+
+    resp = {}
+
+    if data["op"] == "ADD":
+        resp = skel.aluno(data)
+    elif data["op"] == "REMOVE":
+        resp = skel.aluno(data)
+    elif data["op"] == "SHOW":
+        resp = skel.aluno(data)
+    else:
+        return {"operation": "invalid"}
+
+    return resp
+
 
 @app.route("/turmas", methods=["POST"])
 def turmas_api(path):
 
+    data = json.loads(request.data, object_pairs_hook=OrderedDict)
+
+    resp = {}
+
     if request.method == "PUT":
-        pass
+        resp = skel.turmas(data)
     elif request.method == "DELETE":
-        pass
+        resp = skel.turmas(data)
     elif request.method == "POST":
-        pass
+        resp = skel.turmas(data)
     else:
-        return {"response", "Request type not supported, only GET, PUT and DELETE are!"}
+        return {"operation": "invalid"}
 
 
 @app.route("/disciplinas", methods=["PUT", "DELETE", "POST"])
 def disciplinas_api(path):
 
+    data = json.loads(request.data, object_pairs_hook=OrderedDict)
+
+    resp = {}
+
     if request.method == "PUT":
-        pass
+        resp = skel.turmas(data)
     elif request.method == "DELETE":
-        pass
+        resp = skel.turmas(data)
     elif request.method == "POST":
-        pass
+        resp = skel.turmas(data)
     else:
-        return {"response", "Request type not supported, only GET, PUT and DELETE are!"}
+        return {"operation": "invalid"}
+
+    return resp
+
+
+@app.route("/disciplinas", methods=["POST"])
+def incricoes_api():
+
+    data = json.loads(request.data, object_pairs_hook=OrderedDict)
+
+    resp = {}
+
+    if data["op"] == "ADD":
+        resp = skel.inscricoes(data)
+    elif data["op"] == "DELETE":
+        resp = skel.inscricoes(data)
+    elif data["op"] == "SHOW":
+        resp = skel.inscricoes(data)
+    else:
+        return {"operation": "invalid"}
+
+    return resp
 
 if __name__ == '__main__':
     app.run()
