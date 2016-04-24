@@ -3,8 +3,12 @@ from flask import request
 from flask import json
 import sqlite3
 import skel
+import json
+from collections import OrderedDict
 
 app = Flask(__name__)
+
+
 
 @app.route('/')
 def hello_world():
@@ -27,42 +31,34 @@ def api_message():
     else:
         return "415 Unsupported Media Type ;)"
 
-@app.route("/alunos/<path:path>", methods=["PUT", "DELETE", "GET"])
-def alunos_api(path):
+@app.route("/alunos", methods=["POST"])
+def alunos_api():
 
-    if request.method == "PUT":
-        pass
-    elif request.method == "DELETE":
-        pass
-    elif request.method == "GET":
-        print request.path
-        print path.split('/')
-        return "Ok"
-    else:
-        return {"response", "Request type not supported, only GET, PUT and DELETE are!"}
+    print request.path
+    print json.loads(request.data, object_pairs_hook=OrderedDict)
+    return "Ok"
 
-
-@app.route("/turmas/<path:path>", methods=["PUT", "DELETE", "GET"])
+@app.route("/turmas", methods=["POST"])
 def turmas_api(path):
 
     if request.method == "PUT":
         pass
     elif request.method == "DELETE":
         pass
-    elif request.method == "GET":
+    elif request.method == "POST":
         pass
     else:
         return {"response", "Request type not supported, only GET, PUT and DELETE are!"}
 
 
-@app.route("/disciplinas/<path:path>", methods=["PUT", "DELETE", "GET"])
+@app.route("/disciplinas", methods=["PUT", "DELETE", "POST"])
 def disciplinas_api(path):
 
     if request.method == "PUT":
         pass
     elif request.method == "DELETE":
         pass
-    elif request.method == "GET":
+    elif request.method == "POST":
         pass
     else:
         return {"response", "Request type not supported, only GET, PUT and DELETE are!"}
