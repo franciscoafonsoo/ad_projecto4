@@ -49,7 +49,7 @@ while True:
                 headers = {
                 }
 
-                requests.post("http://localhost:5000/" + categories[data["category"]],
+                requests.post("http://localhost:5000/incricoes",
                               data=json.dumps(data), headers=headers)
         except ValueError:
             print "Parametros incorrectos!"
