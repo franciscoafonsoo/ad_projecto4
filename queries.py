@@ -1,9 +1,7 @@
 import sqlite3
 
-queries = {}
-
 add = {
-    "ADD ALUNO": "INSERT INTO alunos (nome, nacionalidade, idade) VALUES (?,?,?);",
+    "ADD ALUNO": "INSERT INTO alunos (nome, nacionalidade, idade) VALUES (?,?,?)",
     "ADD DISCIPLINA": "INSERT INTO disciplina (designacao, ano, semestre) VALUES (?,?,?);",
     "ADD TURMA": "INSERT INTO turma (id_disciplina, tipo, designacao) VALUES (?,?,?);",
     "ADD": "INSERT INTO inscricoes (id_aluno, id_turma, ano_letivo) VALUES (?,?,?);",
