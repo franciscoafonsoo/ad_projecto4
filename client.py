@@ -1,5 +1,5 @@
-import requests
 import json
+import requests
 from collections import OrderedDict
 
 actions = ["ADD", "REMOVE", "SHOW"]
@@ -11,10 +11,9 @@ categories = {"ALUNOS": "alunos",
               "DISCIPLINA": "disciplinas",
               "TURMAS": "turmas",
               "DISCIPLINAS": "disciplinas"
-}
+              }
 
 while True:
-
     msg = raw_input("Comando: ")
     msg = msg.split(" ")
 
@@ -32,8 +31,7 @@ while True:
                     data[i] = msg[index]
                     i += 1
 
-                headers = {
-                }
+                headers = {}
 
                 stuff = requests.post("http://localhost:5000/"+categories[data["category"]],
                                       data=json.dumps(data), headers=headers)
@@ -43,10 +41,8 @@ while True:
                 data = OrderedDict([("op", msg[0])])
 
                 msg.pop(0)
-                i = 0
 
-                headers = {
-                }
+                headers = {}
 
                 requests.post("http://localhost:5000/incricoes",
                               data=json.dumps(data), headers=headers)
@@ -55,4 +51,3 @@ while True:
 
     else:
         print "Action not supported!"
-

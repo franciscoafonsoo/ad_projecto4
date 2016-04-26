@@ -1,7 +1,7 @@
-import skel
 import json
 import sqlite3
 import queries
+import os.path as po
 from flask import json
 from flask import Flask
 from flask import request
@@ -9,19 +9,19 @@ from collections import OrderedDict
 
 
 app = Flask(__name__)
-
-
-def createTables():
-    db.executescript(open("./database/tables.sql").read())
-    conndb.commit()
-
 DATABASE = "./database/aitd.db"
 
-conndb = sqlite3.connect(DATABASE, check_same_thread=False)
-db = conndb.cursor()
-# createTables()
 
-use = skel.Skel(conndb, db)
+def connect_db(dbname):
+    # Existe ficheiro da base de dados?
+    db_is_created = po.isfile(dbname)
+
+    connection = sqlite3.connect(dbname, check_same_thread=False)
+    cursor = connection.cursor()
+    if not db_is_created:
+        cursor.executescript(open("./database/tables.sql").read())
+        connection.commit()
+    return connection, cursor
 
 
 @app.route('/')
@@ -34,7 +34,7 @@ def alunos_api():
 
     data = json.loads(request.data, object_pairs_hook=OrderedDict)
 
-    resp = {}
+    # resp = {}
 
     if data["op"] == "ADD":
         filtrar = [str(data["2"]), str(data["0"]), int(data["1"])]
@@ -72,7 +72,7 @@ def turmas_api():
 
     data = json.loads(request.data, object_pairs_hook=OrderedDict)
 
-    if request.method == "ADD":
+    if data["op"] == "ADD":
         filtrar = [str(data["2"]), str(data["0"]), int(data["1"])]
 
         db.execute(queries.add["ADD TURMA"], filtrar)
@@ -81,10 +81,10 @@ def turmas_api():
         conndb.commit()
         return "OK"
 
-    elif request.method == "REMOVE":
-        resp = use.turmas(data)
-    elif request.method == "SHOW":
-        resp = use.turmas(data)
+    elif data["op"] == "REMOVE":
+        pass
+    elif data["op"] == "SHOW":
+        pass
     else:
         return {"operation": "invalid"}
 
@@ -109,9 +109,9 @@ def disciplinas_api():
         return "OK"
 
     elif data["op"] == "REMOVE":
-        resp = use.turmas(data)
+        pass
     elif data["op"] == "SHOW":
-        resp = use.turmas(data)
+        pass
     else:
         return "OK"
 
@@ -126,17 +126,18 @@ def incricoes_api():
     resp = {}
 
     if data["op"] == "ADD":
-        resp = use.inscricoes(data)
+        pass
     elif data["op"] == "REMOVE":
-        resp = use.inscricoes(data)
+        pass
     elif data["op"] == "SHOW":
-        resp = use.inscricoes(data)
+        pass
     else:
         return {"operation": "invalid"}
 
     return resp
 
 if __name__ == '__main__':
+    conndb, db = connect_db(DATABASE)
     app.debug = True
     app.run()
 
