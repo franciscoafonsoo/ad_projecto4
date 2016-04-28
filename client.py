@@ -21,7 +21,7 @@ while True:
         try:
             if msg[1] in categories.keys():
 
-                data = OrderedDict([("op", msg[0]), ("category", msg[1])])
+                data = {"op": msg[0], "category": msg[1]}
 
                 msg.pop(0)
                 msg.pop(0)
@@ -31,21 +31,21 @@ while True:
                     data[i] = msg[index]
                     i += 1
 
-                headers = {}
+                stufff = requests.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
 
-                stuff = requests.post("http://localhost:5000/"+categories[data["category"]],
-                                      data=json.dumps(data), headers=headers)
+                # stuff = requests.post("http://localhost:5000/"+categories[data["category"]], data=json.dumps(data), headers=headers)
 
             elif type(int(msg[0])) is int:
 
-                data = OrderedDict([("op", msg[0])])
+                # data = OrderedDict([("op", msg[0])])
+
+                data = {"op": msg[0]}
 
                 msg.pop(0)
 
-                headers = {}
+                requests.post("http://localhost:5000/inscricoes", json=json.dumps(data))
 
-                requests.post("http://localhost:5000/incricoes",
-                              data=json.dumps(data), headers=headers)
+                # requests.post("http://localhost:5000/incricoes", data=json.dumps(data), headers=headers)
         except ValueError:
             print "Parametros incorrectos!"
 
