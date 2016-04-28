@@ -5,8 +5,6 @@ import os.path as pa
 from flask import json
 from flask import Flask
 from flask import request
-from flask import Response
-from collections import OrderedDict
 
 app = Flask(__name__)
 DATABASE = "./database/aitd.db"
@@ -24,9 +22,9 @@ def connect_db(dbname):
     return connection, cursor
 
 
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
+# receive working, missing response
+
+# algumas queries ja implementadas e testadas. p.e ADD ALUNO (debug for now)
 
 
 @app.route("/alunos", methods=["POST"])
@@ -35,7 +33,6 @@ def alunos_api():
     if request.headers['Content-Type'] == 'application/json':
 
         data = json.loads(request.json)
-
         print data
 
         if data["op"] == "ADD":
@@ -44,7 +41,6 @@ def alunos_api():
             db.execute(queries.add["ADD ALUNO"], filtrar)
             print db.fetchone()
             conndb.commit()
-
             return "OK"
 
         elif data["op"] == "REMOVE":
@@ -52,7 +48,6 @@ def alunos_api():
 
             db.execute(queries.remove["REMOVE ALUNO"], filtrar)
             print db.fetchone()
-
             conndb.commit()
             return "OK"
 
@@ -61,7 +56,6 @@ def alunos_api():
 
             db.execute(queries.showID["SHOW ALUNO"], filtrar)
             print db.fetchone()
-
             conndb.commit()
             return "OK"
 
@@ -75,94 +69,82 @@ def alunos_api():
 @app.route("/turmas", methods=["POST"])
 def turmas_api():
 
-    data = json.loads(request.data, object_pairs_hook=OrderedDict)
+    if request.headers['Content-Type'] == 'application/json':
 
-    if data["op"] == "ADD":
-        filtrar = [str(data["2"]), str(data["0"]), int(data["1"])]
+        data = json.loads(request.json)
 
-        db.execute(queries.add["ADD TURMA"], filtrar)
-        print db.fetchone()
+        if data["op"] == "ADD":
+            filtrar = [str(data["2"]), str(data["0"]), int(data["1"])]
 
-        conndb.commit()
-        return "OK"
+            db.execute(queries.add["ADD TURMA"], filtrar)
+            print db.fetchone()
+            conndb.commit()
+            return "OK"
 
-    elif data["op"] == "REMOVE":
-        pass
-    elif data["op"] == "SHOW":
-        pass
+        elif data["op"] == "REMOVE":
+            pass
+        elif data["op"] == "SHOW":
+            pass
+        else:
+            return {"operation": "invalid"}
     else:
-        return {"operation": "invalid"}
+        return "415 Unsupported Media Type"
 
 
 @app.route("/disciplinas", methods=["POST"])
 def disciplinas_api():
 
-    data = json.loads(request.data, object_pairs_hook=OrderedDict)
+    if request.headers['Content-Type'] == 'application/json':
 
-    print data
-    resp = "OK"
+        data = json.loads(request.json)
 
-    if data["op"] == "ADD":
-        filtrar = [str(data["2"]), int(data["0"]), int(data["1"])]
+        if data["op"] == "ADD":
+            filtrar = [str(data["2"]), int(data["0"]), int(data["1"])]
 
-        print filtrar
+            print filtrar
 
-        db.execute(queries.add["ADD DISCIPLINA"], filtrar)
-        print db.fetchone()
+            db.execute(queries.add["ADD DISCIPLINA"], filtrar)
+            print db.fetchone()
 
-        conndb.commit()
-        return "OK"
+            conndb.commit()
+            return "OK"
 
-    elif data["op"] == "REMOVE":
-        pass
-    elif data["op"] == "SHOW":
-        pass
+        elif data["op"] == "REMOVE":
+            pass
+        elif data["op"] == "SHOW":
+            pass
+        else:
+            return "OK"
+
     else:
-        return "OK"
-
-    return resp
+        return "415 Unsupported Media Type"
 
 
 @app.route("/inscricoes", methods=["POST"])
 def incricoes_api():
 
-    data = json.loads(request.data, object_pairs_hook=OrderedDict)
+    # incompleto
 
-    resp = {}
+    if request.headers['Content-Type'] == 'application/json':
 
-    if data["op"] == "ADD":
-        pass
-    elif data["op"] == "REMOVE":
-        pass
-    elif data["op"] == "SHOW":
-        pass
+        data = json.loads(request.json)
+
+        if data["op"] == "ADD":
+            pass
+        elif data["op"] == "REMOVE":
+            pass
+        elif data["op"] == "SHOW":
+            pass
+        else:
+            return {"operation": "invalid"}
+
+        return "OK"
+
     else:
-        return {"operation": "invalid"}
-
-    return resp
-
-# @app.route('/messages', methods=['POST'])
-# def api_message():
-#
-#     if request.headers['Content-Type'] == 'text/plain':
-#         return "Text Message: " + request.data
-#
-#   usar isto. nao e preciso usar content-type igual a applicaion/json
-#
-#     elif request.headers['Content-Type'] == 'application/json':
-#         return "JSON Message: " + json.dumps(request.json)
-#
-#     elif request.headers['Content-Type'] == 'application/octet-stream':
-#         f = open('./binary', 'wb')
-#         f.write(request.data)
-#         f.close()
-#         return "Binary message written!"
-#     else:
-#         return "415 Unsupported Media Type ;)"
+        return "415 Unsupported Media Type"
 
 
 if __name__ == '__main__':
     conndb, db = connect_db(DATABASE)
     app.debug = True
     app.run()
-
