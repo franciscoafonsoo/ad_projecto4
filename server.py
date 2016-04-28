@@ -1,5 +1,8 @@
 import json
 import sqlite3
+
+from flask.helpers import make_response
+
 import queries
 import os.path as pa
 from flask import json
@@ -9,17 +12,24 @@ from flask import request
 app = Flask(__name__)
 DATABASE = "./database/aitd.db"
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
 def connect_db(dbname):
     # Existe ficheiro da base de dados?
     db_is_created = pa.isfile(dbname)
 
     connection = sqlite3.connect(dbname, check_same_thread=False)
+    connection.row_factory = dict_factory
     cursor = connection.cursor()
     if not db_is_created:
         cursor.executescript(open("./database/tables.sql").read())
         connection.commit()
     return connection, cursor
+
 
 
 # receive working, missing response
@@ -34,19 +44,17 @@ def alunos_api():
 
         data = json.loads(request.json)
         print data
-
+        query = str(data["op"] + " " + data["category"])
         if data["op"] == "ADD":
             filtrar = [str(data["2"]), str(data["0"]), int(data["1"])]
-            query = str(data["op"] + " " + data["category"])
-
             db.execute(queries.add[query], filtrar)
             print db.fetchone()
             conndb.commit()
             return "OK"
 
         elif data["op"] == "REMOVE":
-            filtrar = [int(data["0"])]
 
+            filtrar = [int(data["0"])]
             db.execute(queries.remove["REMOVE ALUNO"], filtrar)
             print db.fetchone()
             conndb.commit()
@@ -54,11 +62,10 @@ def alunos_api():
 
         elif data["op"] == "SHOW":
             filtrar = [int(data["0"])]
-
-            db.execute(queries.showID["SHOW ALUNO"], filtrar)
-            print db.fetchone()
-            conndb.commit()
-            return "OK"
+            c=db.execute(queries.showID[query], filtrar)
+            rquery=c.fetchone()
+            print rquery
+            return json.dumps(rquery)
 
         else:
             return "operation: invalid"

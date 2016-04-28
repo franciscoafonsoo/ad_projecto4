@@ -1,5 +1,6 @@
 import json
 import requests
+import pprint
 
 actions = ["ADD", "REMOVE", "SHOW"]
 catgorias = ["ALUNO", "TURMA", ""]
@@ -31,6 +32,8 @@ while True:
                     i += 1
 
                 stufff = requests.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
+                response=json.loads(stufff.text)
+                pprint.pprint(response)
 
             elif type(int(msg[0])) is int:
 
