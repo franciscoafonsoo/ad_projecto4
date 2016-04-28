@@ -37,8 +37,9 @@ def alunos_api():
 
         if data["op"] == "ADD":
             filtrar = [str(data["2"]), str(data["0"]), int(data["1"])]
+            query = str(data["op"] + " " + data["category"])
 
-            db.execute(queries.add["ADD ALUNO"], filtrar)
+            db.execute(queries.add[query], filtrar)
             print db.fetchone()
             conndb.commit()
             return "OK"

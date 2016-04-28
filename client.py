@@ -1,6 +1,5 @@
 import json
 import requests
-from collections import OrderedDict
 
 actions = ["ADD", "REMOVE", "SHOW"]
 catgorias = ["ALUNO", "TURMA", ""]
@@ -33,19 +32,13 @@ while True:
 
                 stufff = requests.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
 
-                # stuff = requests.post("http://localhost:5000/"+categories[data["category"]], data=json.dumps(data), headers=headers)
-
             elif type(int(msg[0])) is int:
 
-                # data = OrderedDict([("op", msg[0])])
-
                 data = {"op": msg[0]}
-
                 msg.pop(0)
 
                 requests.post("http://localhost:5000/inscricoes", json=json.dumps(data))
 
-                # requests.post("http://localhost:5000/incricoes", data=json.dumps(data), headers=headers)
         except ValueError:
             print "Parametros incorrectos!"
 
