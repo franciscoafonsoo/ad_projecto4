@@ -8,7 +8,8 @@ import os.path as pa
 from flask import json
 from flask import Flask
 from flask import request
-
+import datetime
+year = datetime.date.today().year
 app = Flask(__name__)
 DATABASE = "./database/aitd.db"
 
@@ -35,121 +36,92 @@ def connect_db(dbname):
 # receive working, missing response
 
 # algumas queries ja implementadas e testadas. p.e ADD ALUNO (debug for now)
-
-
-@app.route("/alunos", methods=["POST"])
-def alunos_api():
-
+def handlerTemp():
     if request.headers['Content-Type'] == 'application/json':
 
         data = json.loads(request.json)
         print data
-        query = str(data["op"] + " " + data["category"])
+
+        if not data.has_key("category"):
+            try:
+                query = str(data["op"])
+                print "test"
+                filtrar = [str(data["0"]), str(data["1"])]
+                if data["op"] == "ADD":
+                    fquery=queries.add[query]
+                    filtrar.append(year)
+                    resp='OK'
+                elif data["op"] == "REMOVE":
+                    fquery = queries.removeID[query]
+                    resp = 'OK'
+                elif data["op"] == "SHOW":
+                    fquery = queries.showID[query]
+                    db.execute(fquery, filtrar)
+                    if(bool(db.fetchone()['COUNT(*)'])):
+                        resp='Esta Inscrito'
+                    else:
+                        resp='Nao esta inscrito'
+                db.execute(fquery, filtrar)
+                print db.fetchone()
+                conndb.commit()
+                return json.dumps(resp)
+            except:
+                return json.dumps("NOK")
+
+        else:
+            query = str(data["op"] + " " + data["category"])
+
         if data["op"] == "ADD":
-            filtrar = [str(data["2"]), str(data["0"]), int(data["1"])]
+            filtrar = [str(data["0"]), str(data["1"]), str(data["2"])]
             db.execute(queries.add[query], filtrar)
             print db.fetchone()
             conndb.commit()
-            return "OK"
-
+            return json.dumps("OK")
         elif data["op"] == "REMOVE":
 
             filtrar = [int(data["0"])]
             db.execute(queries.remove["REMOVE ALUNO"], filtrar)
             print db.fetchone()
             conndb.commit()
-            return "OK"
+            return json.dumps("OK")
 
         elif data["op"] == "SHOW":
-            filtrar = [int(data["0"])]
-            c=db.execute(queries.showID[query], filtrar)
-            rquery=c.fetchone()
+            filtrar = []
+            if "ALL" in data["category"].split(" ") and data.has_key("0"):
+                queryDic=queries.showAllID
+            else:
+                queryDic=queries.showID
+            try:
+                filtrar = [int(data["0"])]
+            except:
+                queryDic=queries.show
+            c = db.execute(queryDic[query], filtrar)
+            rquery = c.fetchall()
             print rquery
             return json.dumps(rquery)
 
         else:
-            return "operation: invalid"
+            return json.dumps("operation: invalid")
 
     else:
         return "415 Unsupported Media Type"
 
+
+@app.route("/alunos", methods=["POST"])
+def alunos_api():
+    return handlerTemp()
 
 @app.route("/turmas", methods=["POST"])
 def turmas_api():
-
-    if request.headers['Content-Type'] == 'application/json':
-
-        data = json.loads(request.json)
-
-        if data["op"] == "ADD":
-            filtrar = [str(data["2"]), str(data["0"]), int(data["1"])]
-
-            db.execute(queries.add["ADD TURMA"], filtrar)
-            print db.fetchone()
-            conndb.commit()
-            return "OK"
-
-        elif data["op"] == "REMOVE":
-            pass
-        elif data["op"] == "SHOW":
-            pass
-        else:
-            return {"operation": "invalid"}
-    else:
-        return "415 Unsupported Media Type"
-
+    return handlerTemp()
 
 @app.route("/disciplinas", methods=["POST"])
 def disciplinas_api():
-
-    if request.headers['Content-Type'] == 'application/json':
-
-        data = json.loads(request.json)
-
-        if data["op"] == "ADD":
-            filtrar = [str(data["2"]), int(data["0"]), int(data["1"])]
-
-            print filtrar
-
-            db.execute(queries.add["ADD DISCIPLINA"], filtrar)
-            print db.fetchone()
-
-            conndb.commit()
-            return "OK"
-
-        elif data["op"] == "REMOVE":
-            pass
-        elif data["op"] == "SHOW":
-            pass
-        else:
-            return "OK"
-
-    else:
-        return "415 Unsupported Media Type"
-
+ return handlerTemp()
 
 @app.route("/inscricoes", methods=["POST"])
 def incricoes_api():
-
-    # incompleto
-
-    if request.headers['Content-Type'] == 'application/json':
-
-        data = json.loads(request.json)
-
-        if data["op"] == "ADD":
-            pass
-        elif data["op"] == "REMOVE":
-            pass
-        elif data["op"] == "SHOW":
-            pass
-        else:
-            return {"operation": "invalid"}
-
-        return "OK"
-
-    else:
-        return "415 Unsupported Media Type"
+    return handlerTemp()
 
 
 if __name__ == '__main__':

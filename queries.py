@@ -1,8 +1,10 @@
 import sqlite3
+import datetime
+year = datetime.date.today().year
 
 add = {
-    "ADD ALUNO": "INSERT INTO alunos (nome, nacionalidade, idade) VALUES (?,?,?)",
-    "ADD DISCIPLINA": "INSERT INTO disciplina (designacao, ano, semestre) VALUES (?,?,?);",
+    "ADD ALUNO": "INSERT INTO alunos (nacionalidade, idade, nome) VALUES (?,?,?)",
+    "ADD DISCIPLINA": "INSERT INTO disciplina (ano, semestre,designacao) VALUES (?,?,?);",
     "ADD TURMA": "INSERT INTO turma (id_disciplina, tipo, designacao) VALUES (?,?,?);",
     "ADD": "INSERT INTO inscricoes (id_aluno, id_turma, ano_letivo) VALUES (?,?,?);",
 }
@@ -14,13 +16,13 @@ showID = {
     "SHOW": "SELECT COUNT(*) FROM inscricoes where inscricoes.id_aluno=? and inscricoes.id_turma=?;",
 }
 
-showAll = {
-    "SHOW ALL ALUNOS T": "SELECT * FROM alunos JOIN inscricoes WHERE alunos.id = inscricoes.id_aluno and inscricoes.id_turma = ?;",
-    "SHOW ALL ALUNOS D": "SELECT * FROM alunos join inscricoes where alunos.id = inscricoes.id_aluno and inscricoes.id_turma=(SELECT id_turma from turma where id_disciplina=?);",
-    "SHOW ALL TURMAS": "SELECT id_turma from turma where id_disciplina=?;",
+showAllID = {
+    "SHOW ALL ALUNOS TURMA": "SELECT * FROM alunos JOIN inscricoes WHERE alunos.id = inscricoes.id_aluno and inscricoes.id_turma = ?;",
+    "SHOW ALL ALUNOS DISCIPLINA": "SELECT * FROM alunos join inscricoes where alunos.id = inscricoes.id_aluno and inscricoes.id_turma=(SELECT id_turma from turma where id_disciplina=?);",
+    "SHOW ALL TURMAS": "SELECT id from turma where id_disciplina=?;",
 }
 
-show = {
+show= {
     "SHOW ALL ALUNOS": "SELECT * FROM alunos;",
     "SHOW ALL DISCIPLINAS": "SELECT * FROM disciplina;",
     "SHOW ALL TURMAS": "SELECT * FROM turma;"
