@@ -3,7 +3,12 @@ import requests
 import pprint
 
 actions = ["ADD", "REMOVE", "SHOW"]
-cat2=['ALUNOS','TURMAS','DISCIPLINAS']
+cat2 = ['ALUNOS', 'TURMAS', 'DISCIPLINAS']
+
+ano = ["1", "2", "3", "4", "5"]
+semestre = ["1", "2"]
+tipo = ["T", "TP", "PL", "O", "OT"]
+
 categories = {"ALL ALUNOS": "alunos",
               "TURMA": "turmas",
               "ALUNO": 'alunos',
@@ -12,24 +17,73 @@ categories = {"ALL ALUNOS": "alunos",
               "ALL DISCIPLINAS": "disciplinas"
               }
 
+
+def checksingleop():
+    if data["op"] == "SHOW" or data["op"] == "REMOVE":
+        if msg[2].isdigit():
+            return True
+        else:
+            print "parametros errados"
+            return False
+    else:
+        print "parametros errados"
+        return False
+
+
+def checkinput():
+    if data["category"] == "ALUNO":
+        if msg[3].isdigit():
+            return True
+        else:
+            print "parametros errados"
+            return False
+
+    if data["category"] == "DISCIPLINA":
+        if msg[2] in ano and msg["3"] in semestre:
+            return True
+        else:
+            print "parametros errados"
+            return False
+
+    if data["category"] == "TURMA":
+        if msg[2].isdigit() and msg[3] in tipo:
+            return True
+        else:
+            print "parametros errados"
+            return False
+
+
 while True:
     msg = raw_input("Comando: ")
     msg = msg.split(" ")
 
     if msg[0] in actions:
         try:
-            if 'ALL' in msg and msg[2] in cat2 :
+            if 'ALL' in msg and msg[2] in cat2:
+
                 data = {"op": msg[0], "category": msg[1] + ' ' + msg[2]}
+
+                if len(msg) > 3:
+                    if msg[4].isdigit():
+                        pass
+                    else:
+                        print "parametros errados"
+                        continue
+
                 msg.pop(0)
                 msg.pop(0)
                 msg.pop(0)
+
                 i = 0
                 for index, command in enumerate(msg):
                     data[i] = msg[index]
                     i += 1
-                stufff = requests.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
-                response = json.loads(stufff.text)
-                rows=response[0].keys()
+
+                print data
+
+                stuff = requests.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
+                response = json.loads(stuff.text)
+                rows = response[0].keys()
                 for i in rows:
                     print i + ", ",
                 print " "
@@ -42,6 +96,14 @@ while True:
 
                 data = {"op": msg[0], "category": msg[1]}
 
+                if checksingleop():
+                    pass
+                else:
+                    if checkinput():
+                        pass
+                    else:
+                        continue
+
                 msg.pop(0)
                 msg.pop(0)
 
@@ -50,20 +112,27 @@ while True:
                     data[i] = msg[index]
                     i += 1
 
-                stufff = requests.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
-                response=json.loads(stufff.text)
+                print data
+
+                stuff = requests.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
+                response = json.loads(stuff.text)
                 pprint.pprint(response)
 
+            elif type(int(msg[1])) is int and type(int(msg[2])) is int:
 
-            elif type(int(msg[1])) is int and type(int(msg[2])) is int :
                 data = {"op": msg[0]}
+
                 msg.pop(0)
+
                 i = 0
                 for index, command in enumerate(msg):
                     data[i] = msg[index]
                     i += 1
-                stufff=requests.post("http://localhost:5000/inscricoes", json=json.dumps(data))
-                response = json.loads(stufff.text)
+
+                print data
+
+                stuff = requests.post("http://localhost:5000/inscricoes", json=json.dumps(data))
+                response = json.loads(stuff.text)
                 pprint.pprint(response)
 
         except ValueError:
