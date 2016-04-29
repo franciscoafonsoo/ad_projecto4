@@ -9,15 +9,19 @@ from flask import json
 from flask import Flask
 from flask import request
 import datetime
+
+
 year = datetime.date.today().year
 app = Flask(__name__)
 DATABASE = "./database/aitd.db"
+
 
 def dict_factory(cursor, row):
     d = {}
     for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
     return d
+
 
 def connect_db(dbname):
     # Existe ficheiro da base de dados?
@@ -32,10 +36,11 @@ def connect_db(dbname):
     return connection, cursor
 
 
-
 # receive working, missing response
 
 # algumas queries ja implementadas e testadas. p.e ADD ALUNO (debug for now)
+
+
 def handlerTemp():
     if request.headers['Content-Type'] == 'application/json':
 
@@ -48,19 +53,19 @@ def handlerTemp():
                 print "test"
                 filtrar = [str(data["0"]), str(data["1"])]
                 if data["op"] == "ADD":
-                    fquery=queries.add[query]
+                    fquery = queries.add[query]
                     filtrar.append(year)
-                    resp='OK'
+                    resp = 'OK'
                 elif data["op"] == "REMOVE":
                     fquery = queries.removeID[query]
                     resp = 'OK'
                 elif data["op"] == "SHOW":
                     fquery = queries.showID[query]
                     db.execute(fquery, filtrar)
-                    if(bool(db.fetchone()['COUNT(*)'])):
-                        resp='Esta Inscrito'
+                    if bool(db.fetchone()['COUNT(*)']):
+                        resp = 'Esta Inscrito'
                     else:
-                        resp='Nao esta inscrito'
+                        resp = 'Nao esta inscrito'
                 db.execute(fquery, filtrar)
                 print db.fetchone()
                 conndb.commit()
@@ -88,13 +93,13 @@ def handlerTemp():
         elif data["op"] == "SHOW":
             filtrar = []
             if "ALL" in data["category"].split(" ") and data.has_key("0"):
-                queryDic=queries.showAllID
+                queryDic = queries.showAllID
             else:
-                queryDic=queries.showID
+                queryDic = queries.showID
             try:
                 filtrar = [int(data["0"])]
             except:
-                queryDic=queries.show
+                queryDic = queries.show
             c = db.execute(queryDic[query], filtrar)
             rquery = c.fetchall()
             print rquery
@@ -111,13 +116,16 @@ def handlerTemp():
 def alunos_api():
     return handlerTemp()
 
+
 @app.route("/turmas", methods=["POST"])
 def turmas_api():
     return handlerTemp()
 
+
 @app.route("/disciplinas", methods=["POST"])
 def disciplinas_api():
- return handlerTemp()
+    return handlerTemp()
+
 
 @app.route("/inscricoes", methods=["POST"])
 def incricoes_api():

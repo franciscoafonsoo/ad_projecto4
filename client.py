@@ -136,7 +136,7 @@ while True:
                 pprint.pprint(response)
 
         except ValueError:
-            print "Parametros incorrectos!"
+            print "parametros incorrectos"
 
     else:
         print "Action not supported!"
