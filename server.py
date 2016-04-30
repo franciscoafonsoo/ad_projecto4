@@ -13,7 +13,9 @@ import datetime
 
 year = datetime.date.today().year
 app = Flask(__name__)
-DATABASE = "./database/aitd.db"
+
+DATABASE = "./dabatase/aitd.bd"
+DATABASE_ERROR = "/home/sherby/Documents/ad/2016/cenas/fodasse3/database/aitd.db"
 
 
 def dict_factory(cursor, row):
@@ -47,31 +49,8 @@ def handlerTemp():
         data = json.loads(request.json)
         print data
 
-        if not data.has_key("category"):
-            try:
-                query = str(data["op"])
-                print "test"
-                filtrar = [str(data["0"]), str(data["1"])]
-                if data["op"] == "ADD":
-                    fquery = queries.add[query]
-                    filtrar.append(year)
-                    resp = 'OK'
-                elif data["op"] == "REMOVE":
-                    fquery = queries.removeID[query]
-                    resp = 'OK'
-                elif data["op"] == "SHOW":
-                    fquery = queries.showID[query]
-                    db.execute(fquery, filtrar)
-                    if bool(db.fetchone()['COUNT(*)']):
-                        resp = 'Esta Inscrito'
-                    else:
-                        resp = 'Nao esta inscrito'
-                db.execute(fquery, filtrar)
-                print db.fetchone()
-                conndb.commit()
-                return json.dumps(resp)
-            except:
-                return json.dumps("NOK")
+        if "category" not in data:
+            pass
 
         else:
             query = str(data["op"] + " " + data["category"])
@@ -85,6 +64,7 @@ def handlerTemp():
         elif data["op"] == "REMOVE":
 
             filtrar = [int(data["0"])]
+            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
             db.execute(queries.remove["REMOVE ALUNO"], filtrar)
             print db.fetchone()
             conndb.commit()
@@ -129,10 +109,40 @@ def disciplinas_api():
 
 @app.route("/inscricoes", methods=["POST"])
 def incricoes_api():
-    return handlerTemp()
+
+    if request.headers['Content-Type'] == 'application/json':
+        data = json.loads(request.json)
+
+        try:
+            query = str(data["op"])
+
+            print "test"
+
+            filtrar = [str(data["0"]), str(data["1"])]
+
+            if data["op"] == "ADD":
+                fquery = queries.add[query]
+                filtrar.append(year)
+                resp = 'OK'
+            elif data["op"] == "REMOVE":
+                fquery = queries.removeID[query]
+                resp = 'OK'
+            elif data["op"] == "SHOW":
+                fquery = queries.showID[query]
+                db.execute(fquery, filtrar)
+                if bool(db.fetchone()['COUNT(*)']):
+                    resp = 'Esta Inscrito'
+                else:
+                    resp = 'Nao esta inscrito'
+            db.execute(fquery, filtrar)
+            print db.fetchone()
+            conndb.commit()
+            return json.dumps(resp)
+        except:
+            return json.dumps("NOK")
 
 
 if __name__ == '__main__':
-    conndb, db = connect_db(DATABASE)
+    conndb, db = connect_db(DATABASE_ERROR)
     app.debug = True
     app.run()
