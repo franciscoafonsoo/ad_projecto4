@@ -46,7 +46,7 @@ def connect_db(dbname):
 
 @app.route("/alunos", methods=["POST"])
 def alunos_api():
-    error = None
+
     if request.headers['Content-Type'] == 'application/json':
 
         data = json.loads(request.json)
@@ -62,6 +62,11 @@ def alunos_api():
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
 
+            if data["0"] == "DISCIPLINA":
+                queryall = "SHOW ALL ALUNOS DISCIPLINA"
+            elif data["0"] == "TURMA":
+                queryall = "SHOW ALL ALUNOS TURMA"
+
             filtrar = [int(data["0"])]
             # db.execute(queries.inscricoes[query], filtrar)
             db.execute(queries.remove[query], filtrar)
@@ -70,6 +75,12 @@ def alunos_api():
             return json.dumps("OK")
 
         elif data["op"] == "SHOW":
+
+            if data["0"] == "DISCIPLINA":
+                queryall = "SHOW ALL ALUNOS DISCIPLINA"
+            elif data["0"] == "TURMA":
+                queryall = "SHOW ALL ALUNOS TURMA"
+
             filtrar = []
             if "ALL" in data["category"].split(" ") and data.has_key("0"):
                 queryDic = queries.showAllID
@@ -79,7 +90,7 @@ def alunos_api():
                 filtrar = [int(data["0"])]
             except:
                 queryDic = queries.show
-            c = db.execute(queryDic[query], filtrar)
+            c = db.execute(queryDic[queryall], filtrar)
             rquery = c.fetchall()
             print rquery
             return json.dumps(rquery)
@@ -117,7 +128,12 @@ def turmas_api():
             return json.dumps("OK")
 
         elif data["op"] == "SHOW":
+
             filtrar = []
+
+            if data["0"] == "DISCIPLINA":
+                queryall = "SHOW ALL TURMAS"
+
             if "ALL" in data["category"].split(" ") and data.has_key("0"):
                 queryDic = queries.showAllID
             else:
@@ -126,7 +142,7 @@ def turmas_api():
                 filtrar = [int(data["0"])]
             except:
                 queryDic = queries.show
-            c = db.execute(queryDic[query], filtrar)
+            c = db.execute(queryDic[queryall], filtrar)
             rquery = c.fetchall()
             print rquery
             return json.dumps(rquery)
