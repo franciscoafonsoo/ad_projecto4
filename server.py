@@ -16,7 +16,7 @@ year = datetime.date.today().year
 app = Flask(__name__)
 
 DATABASE = "./dabatase/aitd.bd"
-DATABASE_ERROR = "/home/sherby/Documents/ad/2016/cenas/fodasse3/database/aitd.db"
+DATABASE_ERROR = "database/aitd.db"
 
 
 def dict_factory(cursor, row):
@@ -180,12 +180,12 @@ def disciplinas_api():
         elif data["op"] == "REMOVE":
 
             filtrar = [int(data["0"])]
-            db.execute(queries.removedisciplinas[0], [data[0]])
+            db.execute(queries.removedisciplinas[0], filtrar)
             temp1 = db.fetchall()
             for turma in temp1:
-                db.execute(queries.removedisciplinas[1], [turma[0]])
-                db.execute(queries.removedisciplinas[2], [turma[0]])
-            db.execute(queries.removedisciplinas[3], [data[0]])
+                db.execute(queries.removedisciplinas[1], [turma["id"]])
+                db.execute(queries.removedisciplinas[2], [turma["id"]])
+            db.execute(queries.removedisciplinas[3], [filtrar[0]])
             conndb.commit()
 
             # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
