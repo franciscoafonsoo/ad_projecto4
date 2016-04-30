@@ -3,7 +3,8 @@ import sqlite3
 
 from flask.helpers import make_response
 
-from flask import request
+from flask import jsonify
+
 import queries
 import os.path as pa
 from flask import json
@@ -103,10 +104,16 @@ def alunos_api():
             return json.dumps(rquery)
 
         else:
-            return json.dumps("operation: invalid")
+            resp = jsonify("Verificar Pedidos")
+            resp.status_code = 400
+            return resp
+
+            #json.dumps("operation: invalid")
 
     else:
-        return "415 Unsupported Media Type"
+        resp = jsonify("Verificar Pedidos")
+        resp.status_code = 400
+        return resp
 
 
 @app.route("/turmas", methods=["POST"])
@@ -155,11 +162,16 @@ def turmas_api():
             print rquery
             return json.dumps(rquery)
 
+
         else:
-            return json.dumps("operation: invalid")
+            resp = jsonify("Verificar Pedidos")
+            resp.status_code = 400
+            return resp
 
     else:
-        return "415 Unsupported Media Type"
+        resp = jsonify("Verificar Pedidos")
+        resp.status_code = 400
+        return resp
 
 
 @app.route("/disciplinas", methods=["POST"])
@@ -211,10 +223,14 @@ def disciplinas_api():
             return json.dumps(rquery)
 
         else:
-            return json.dumps("operation: invalid")
+            resp = jsonify("Verificar Pedidos")
+            resp.status_code = 400
+            return resp
 
     else:
-        return "415 Unsupported Media Type"
+        resp = jsonify("Verificar Pedidos")
+        resp.status_code = 400
+        return resp
 
 
 @app.route("/inscricoes", methods=["POST"])
@@ -249,7 +265,9 @@ def incricoes_api():
             conndb.commit()
             return json.dumps(resp)
         except:
-            return json.dumps("NOK")
+            resp = jsonify("NOK")
+            resp.status_code = 400
+            return resp
 
 
 if __name__ == '__main__':
