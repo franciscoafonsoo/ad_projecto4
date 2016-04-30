@@ -14,14 +14,11 @@ import os.path as pa
 from flask import json
 from flask import Flask
 from flask import request
-
 from flask import jsonify
 
 year = datetime.date.today().year
+DATABASE = "aitd.bd"
 app = Flask(__name__)
-
-DATABASE = "./dabatase/aitd.bd"
-DATABASE_ERROR = "/home/sherby/Documents/ad/2016/cenas/fodasse3/database/aitd.db"
 
 
 def dict_factory(cursor, row):
@@ -44,11 +41,6 @@ def connect_db(dbname):
     return connection, cursor
 
 
-# receive working, missing response
-
-# algumas queries ja implementadas e testadas. p.e ADD ALUNO (debug for now)
-
-
 @app.route("/alunos", methods=["POST"])
 def alunos_api():
 
@@ -67,22 +59,20 @@ def alunos_api():
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
 
-            '''
-            NAO SEI O QUE ISTO TA AQUI A FAZER!!!!!
-            if data["0"] == "DISCIPLINA":
-                queryall = "SHOW ALL ALUNOS DISCIPLINA"
-            elif data["0"] == "TURMA":
-                queryall = "SHOW ALL ALUNOS TURMA"
-            '''
+            # if data["0"] == "DISCIPLINA":
+            #     queryall = "SHOW ALL ALUNOS DISCIPLINA"
+            # elif data["0"] == "TURMA":
+            #     queryall = "SHOW ALL ALUNOS TURMA"
 
             filtrar = [int(data["0"])]
 
             db.execute(queries.removeInscricaoForeignId["REMOVE ALUNO INSCRICOES"], filtrar)
             db.execute(queries.remove[query], filtrar)
 
-            # db.execute(queries.inscricoes[query], filtrar)
-            # db.execute(queries.remove[query], filtrar)
+            # db.execute(queries.inscricoes[queryall], filtrar)
+            # db.execute(queries.remove[queryall], filtrar)
             # print db.fetchone()
+
             conndb.commit()
             return json.dumps("OK")
 
@@ -94,12 +84,14 @@ def alunos_api():
                 queryall = "SHOW ALL ALUNOS TURMA"
 
             filtrar = []
+
             if "ALL" in data["category"].split(" ") and data.has_key("0"):
                 queryDic = queries.showAllID
             else:
                 queryDic = queries.showID
             try:
                 filtrar = [int(data["0"])]
+
             except:
                 queryDic = queries.show
             c = db.execute(queryDic[queryall], filtrar)
@@ -112,7 +104,7 @@ def alunos_api():
             resp.status_code = 400
             return resp
 
-            #json.dumps("operation: invalid")
+            # json.dumps("operation: invalid")
 
     else:
         resp = jsonify("Verificar Pedidos")
@@ -131,18 +123,19 @@ def turmas_api():
         query = str(data["op"] + " " + data["category"])
 
         if data["op"] == "ADD":
+
             filtrar = [str(data["0"]), str(data["1"]), str(data["2"])]
             db.execute(queries.add[query], filtrar)
             print db.fetchone()
             conndb.commit()
             return json.dumps("OK")
+
         elif data["op"] == "REMOVE":
 
             filtrar = [int(data["0"])]
 
             db.execute(queries.removeInscricaoForeignId["REMOVE TURMA INSCRICOES"], filtrar)
             db.execute(queries.remove[query], filtrar)
-            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
             conndb.commit()
             return json.dumps("OK")
 
@@ -275,6 +268,6 @@ def incricoes_api():
 
 
 if __name__ == '__main__':
-    conndb, db = connect_db(DATABASE_ERROR)
+    conndb, db = connect_db(DATABASE)
     app.debug = True
     app.run()
