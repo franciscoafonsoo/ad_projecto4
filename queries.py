@@ -50,3 +50,9 @@ removeInscricaoForeignId = {
     "REMOVE TURMA INSCRICOES":"DELETE FROM inscricoes WHERE id_turma =?;",
     "REMOVE ALUNO INSCRICOES":"DELETE FROM inscricoes WHERE id_aluno = ?;"
 }
+
+removedisciplinas = ["SELECT * from turma where id_disciplina = ?;",
+                     "DELETE FROM inscricoes WHERE id_turma = ?;",
+                     "DELETE FROM turma where turma.id = ?;",
+                     "DELETE FROM disciplina where id = ?;"
+                     ]

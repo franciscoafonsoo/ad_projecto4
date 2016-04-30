@@ -76,8 +76,8 @@ def alunos_api():
             db.execute(queries.remove[query], filtrar)
 
             # db.execute(queries.inscricoes[query], filtrar)
-            #db.execute(queries.remove[query], filtrar)
-            #print db.fetchone()
+            # db.execute(queries.remove[query], filtrar)
+            # print db.fetchone()
             conndb.commit()
             return json.dumps("OK")
 
@@ -180,18 +180,19 @@ def disciplinas_api():
         elif data["op"] == "REMOVE":
 
             filtrar = [int(data["0"])]
-            db.execute("SELECT * from turma where id_disciplina = %s", [data[0]])
+            db.execute(queries.removedisciplinas[0], [data[0]])
             temp1 = db.fetchall()
             for turma in temp1:
-                db.execute("DELETE FROM inscricoes WHERE id_turma = %s;", [turma[0]])
-                db.execute("DELETE FROM turma where turma.id = %s;", [turma[0]])
-            db.execute("DELETE FROM disciplina where id = %s;", [data[0]])
+                db.execute(queries.removedisciplinas[1], [turma[0]])
+                db.execute(queries.removedisciplinas[2], [turma[0]])
+            db.execute(queries.removedisciplinas[3], [data[0]])
             conndb.commit()
 
             # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
             #db.execute(queries.remove[query], filtrar)
             #print db.fetchone()
             #conndb.commit()
+
             return json.dumps("OK")
 
         elif data["op"] == "SHOW":
