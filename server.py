@@ -28,7 +28,7 @@ def connect_db(dbname):
     connection.row_factory = dict_factory
     cursor = connection.cursor()
     if not db_is_created:
-        cursor.executescript(open("./database/tables.sql").read())
+        cursor.executescript(open("tables.sql").read())
         connection.commit()
     return connection, cursor
 
