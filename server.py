@@ -3,6 +3,7 @@ import sqlite3
 
 from flask.helpers import make_response
 
+from flask import request
 import queries
 import os.path as pa
 from flask import json
@@ -43,17 +44,15 @@ def connect_db(dbname):
 # algumas queries ja implementadas e testadas. p.e ADD ALUNO (debug for now)
 
 
-def handlerTemp():
+@app.route("/alunos", methods=["POST"])
+def alunos_api():
+    error = None
     if request.headers['Content-Type'] == 'application/json':
 
         data = json.loads(request.json)
         print data
 
-        if "category" not in data:
-            pass
-
-        else:
-            query = str(data["op"] + " " + data["category"])
+        query = str(data["op"] + " " + data["category"])
 
         if data["op"] == "ADD":
             filtrar = [str(data["0"]), str(data["1"]), str(data["2"])]
@@ -64,8 +63,8 @@ def handlerTemp():
         elif data["op"] == "REMOVE":
 
             filtrar = [int(data["0"])]
-            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
-            db.execute(queries.remove["REMOVE ALUNO"], filtrar)
+            # db.execute(queries.inscricoes[query], filtrar)
+            db.execute(queries.remove[query], filtrar)
             print db.fetchone()
             conndb.commit()
             return json.dumps("OK")
@@ -92,19 +91,97 @@ def handlerTemp():
         return "415 Unsupported Media Type"
 
 
-@app.route("/alunos", methods=["POST"])
-def alunos_api():
-    return handlerTemp()
-
-
 @app.route("/turmas", methods=["POST"])
 def turmas_api():
-    return handlerTemp()
+
+    if request.headers['Content-Type'] == 'application/json':
+
+        data = json.loads(request.json)
+        print data
+
+        query = str(data["op"] + " " + data["category"])
+
+        if data["op"] == "ADD":
+            filtrar = [str(data["0"]), str(data["1"]), str(data["2"])]
+            db.execute(queries.add[query], filtrar)
+            print db.fetchone()
+            conndb.commit()
+            return json.dumps("OK")
+        elif data["op"] == "REMOVE":
+
+            filtrar = [int(data["0"])]
+            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
+            db.execute(queries.remove[query], filtrar)
+            print db.fetchone()
+            conndb.commit()
+            return json.dumps("OK")
+
+        elif data["op"] == "SHOW":
+            filtrar = []
+            if "ALL" in data["category"].split(" ") and data.has_key("0"):
+                queryDic = queries.showAllID
+            else:
+                queryDic = queries.showID
+            try:
+                filtrar = [int(data["0"])]
+            except:
+                queryDic = queries.show
+            c = db.execute(queryDic[query], filtrar)
+            rquery = c.fetchall()
+            print rquery
+            return json.dumps(rquery)
+
+        else:
+            return json.dumps("operation: invalid")
+
+    else:
+        return "415 Unsupported Media Type"
 
 
 @app.route("/disciplinas", methods=["POST"])
 def disciplinas_api():
-    return handlerTemp()
+    if request.headers['Content-Type'] == 'application/json':
+
+        data = json.loads(request.json)
+        print data
+
+        query = str(data["op"] + " " + data["category"])
+
+        if data["op"] == "ADD":
+            filtrar = [str(data["0"]), str(data["1"]), str(data["2"])]
+            db.execute(queries.add[query], filtrar)
+            print db.fetchone()
+            conndb.commit()
+            return json.dumps("OK")
+        elif data["op"] == "REMOVE":
+
+            filtrar = [int(data["0"])]
+            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
+            db.execute(queries.remove[query], filtrar)
+            print db.fetchone()
+            conndb.commit()
+            return json.dumps("OK")
+
+        elif data["op"] == "SHOW":
+            filtrar = []
+            if "ALL" in data["category"].split(" ") and data.has_key("0"):
+                queryDic = queries.showAllID
+            else:
+                queryDic = queries.showID
+            try:
+                filtrar = [int(data["0"])]
+            except:
+                queryDic = queries.show
+            c = db.execute(queryDic[query], filtrar)
+            rquery = c.fetchall()
+            print rquery
+            return json.dumps(rquery)
+
+        else:
+            return json.dumps("operation: invalid")
+
+    else:
+        return "415 Unsupported Media Type"
 
 
 @app.route("/inscricoes", methods=["POST"])

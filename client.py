@@ -39,7 +39,7 @@ def checkinput():
             return False
 
     if data["category"] == "DISCIPLINA":
-        if msg[2] in ano and msg["3"] in semestre:
+        if msg[2] in ano and msg[3] in semestre:
             return True
         else:
             print "parametros errados"

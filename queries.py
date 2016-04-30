@@ -1,4 +1,3 @@
-import sqlite3
 import datetime
 year = datetime.date.today().year
 
