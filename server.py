@@ -15,8 +15,8 @@ import datetime
 year = datetime.date.today().year
 app = Flask(__name__)
 
-DATABASE = "./dabatase/aitd.bd"
-DATABASE_ERROR = "database/aitd.db"
+DATABASE = "aitd.bd"
+DATABASE_ERROR = "aitd.db"
 
 
 def dict_factory(cursor, row):
