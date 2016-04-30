@@ -1,3 +1,11 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+Aplicações distribuídas - Projeto 1 - lock_client.py
+Grupo: 25
+Números de aluno: 44314, 43551, 44285
+"""
+
 import datetime
 year = datetime.date.today().year
 
@@ -51,8 +59,9 @@ removeInscricaoForeignId = {
     "REMOVE ALUNO INSCRICOES":"DELETE FROM inscricoes WHERE id_aluno = ?;"
 }
 
-removedisciplinas = ["SELECT * from turma where id_disciplina = ?;",
-                     "DELETE FROM inscricoes WHERE id_turma = ?;",
-                     "DELETE FROM turma where turma.id = ?;",
-                     "DELETE FROM disciplina where id = ?;"
-                     ]
+removedisciplinas = [
+    "SELECT * from turma where id_disciplina = ?;",
+    "DELETE FROM inscricoes WHERE id_turma = ?;",
+    "DELETE FROM turma where turma.id = ?;",
+    "DELETE FROM disciplina where id = ?;"
+]

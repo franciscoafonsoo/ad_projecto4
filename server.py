@@ -1,22 +1,16 @@
 import json
 import sqlite3
-
-from flask.helpers import make_response
-
-from flask import request
 import queries
+import datetime
 import os.path as pa
 from flask import json
 from flask import Flask
 from flask import request
-import datetime
-
+from flask import jsonify
 
 year = datetime.date.today().year
-app = Flask(__name__)
-
 DATABASE = "aitd.bd"
-DATABASE_ERROR = "aitd.db"
+app = Flask(__name__)
 
 
 def dict_factory(cursor, row):
@@ -62,21 +56,18 @@ def alunos_api():
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
 
-            '''
-            NAO SEI O QUE ISTO TA AQUI A FAZER!!!!!
-            if data["0"] == "DISCIPLINA":
-                queryall = "SHOW ALL ALUNOS DISCIPLINA"
-            elif data["0"] == "TURMA":
-                queryall = "SHOW ALL ALUNOS TURMA"
-            '''
+            # if data["0"] == "DISCIPLINA":
+            #     queryall = "SHOW ALL ALUNOS DISCIPLINA"
+            # elif data["0"] == "TURMA":
+            #     queryall = "SHOW ALL ALUNOS TURMA"
 
             filtrar = [int(data["0"])]
 
             db.execute(queries.removeInscricaoForeignId["REMOVE ALUNO INSCRICOES"], filtrar)
             db.execute(queries.remove[query], filtrar)
 
-            # db.execute(queries.inscricoes[query], filtrar)
-            # db.execute(queries.remove[query], filtrar)
+            # db.execute(queries.inscricoes[queryall], filtrar)
+            # db.execute(queries.remove[queryall], filtrar)
             # print db.fetchone()
             conndb.commit()
             return json.dumps("OK")
@@ -103,10 +94,16 @@ def alunos_api():
             return json.dumps(rquery)
 
         else:
-            return json.dumps("operation: invalid")
+            resp = jsonify("Verificar Pedidos")
+            resp.status_code = 400
+            return resp
+
+            # json.dumps("operation: invalid")
 
     else:
-        return "415 Unsupported Media Type"
+        resp = jsonify("Verificar Pedidos")
+        resp.status_code = 400
+        return resp
 
 
 @app.route("/turmas", methods=["POST"])
@@ -155,11 +152,16 @@ def turmas_api():
             print rquery
             return json.dumps(rquery)
 
+
         else:
-            return json.dumps("operation: invalid")
+            resp = jsonify("Verificar Pedidos")
+            resp.status_code = 400
+            return resp
 
     else:
-        return "415 Unsupported Media Type"
+        resp = jsonify("Verificar Pedidos")
+        resp.status_code = 400
+        return resp
 
 
 @app.route("/disciplinas", methods=["POST"])
@@ -211,10 +213,14 @@ def disciplinas_api():
             return json.dumps(rquery)
 
         else:
-            return json.dumps("operation: invalid")
+            resp = jsonify("Verificar Pedidos")
+            resp.status_code = 400
+            return resp
 
     else:
-        return "415 Unsupported Media Type"
+        resp = jsonify("Verificar Pedidos")
+        resp.status_code = 400
+        return resp
 
 
 @app.route("/inscricoes", methods=["POST"])
@@ -249,10 +255,12 @@ def incricoes_api():
             conndb.commit()
             return json.dumps(resp)
         except:
-            return json.dumps("NOK")
+            resp = jsonify("NOK")
+            resp.status_code = 400
+            return resp
 
 
 if __name__ == '__main__':
-    conndb, db = connect_db(DATABASE_ERROR)
+    conndb, db = connect_db(DATABASE)
     app.debug = True
     app.run()
