@@ -62,15 +62,22 @@ def alunos_api():
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
 
+            '''
+            NAO SEI O QUE ISTO TA AQUI A FAZER!!!!!
             if data["0"] == "DISCIPLINA":
                 queryall = "SHOW ALL ALUNOS DISCIPLINA"
             elif data["0"] == "TURMA":
                 queryall = "SHOW ALL ALUNOS TURMA"
+            '''
 
             filtrar = [int(data["0"])]
-            # db.execute(queries.inscricoes[query], filtrar)
+
+            db.execute(queries.removeInscricaoForeignId["REMOVE ALUNO INSCRICOES"], filtrar)
             db.execute(queries.remove[query], filtrar)
-            print db.fetchone()
+
+            # db.execute(queries.inscricoes[query], filtrar)
+            #db.execute(queries.remove[query], filtrar)
+            #print db.fetchone()
             conndb.commit()
             return json.dumps("OK")
 
@@ -121,9 +128,10 @@ def turmas_api():
         elif data["op"] == "REMOVE":
 
             filtrar = [int(data["0"])]
-            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
+
+            db.execute(queries.removeInscricaoForeignId["REMOVE TURMA INSCRICOES"], filtrar)
             db.execute(queries.remove[query], filtrar)
-            print db.fetchone()
+            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
             conndb.commit()
             return json.dumps("OK")
 
@@ -172,10 +180,18 @@ def disciplinas_api():
         elif data["op"] == "REMOVE":
 
             filtrar = [int(data["0"])]
-            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
-            db.execute(queries.remove[query], filtrar)
-            print db.fetchone()
+            db.execute("SELECT * from turma where id_disciplina = %s", [data[0]])
+            temp1 = db.fetchall()
+            for turma in temp1:
+                db.execute("DELETE FROM inscricoes WHERE id_turma = %s;", [turma[0]])
+                db.execute("DELETE FROM turma where turma.id = %s;", [turma[0]])
+            db.execute("DELETE FROM disciplina where id = %s;", [data[0]])
             conndb.commit()
+
+            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
+            #db.execute(queries.remove[query], filtrar)
+            #print db.fetchone()
+            #conndb.commit()
             return json.dumps("OK")
 
         elif data["op"] == "SHOW":

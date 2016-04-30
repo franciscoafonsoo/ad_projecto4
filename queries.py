@@ -45,3 +45,8 @@ removeID = {
     "REMOVE ALL TURMAS D": "DELETE FROM turma WHERE (SELECT id_turma from turma where id_disciplina=?);",
     "REMOVE": "DELETE FROM inscricoes WHERE(SELECT * FROM inscricoes where inscricoes.id_aluno=? and inscricoes.id_turma=?);"
 }
+
+removeInscricaoForeignId = {
+    "REMOVE TURMA INSCRICOES":"DELETE FROM inscricoes WHERE id_turma =?;",
+    "REMOVE ALUNO INSCRICOES":"DELETE FROM inscricoes WHERE id_aluno = ?;"
+}
