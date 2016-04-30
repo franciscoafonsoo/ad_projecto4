@@ -1,17 +1,21 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+Aplicações distribuídas - Projeto 1 - lock_client.py
+Grupo: 25
+Números de aluno: 44314, 43551, 44285
+"""
+
 import json
 import sqlite3
-
-from flask.helpers import make_response
-
-from flask import jsonify
-
 import queries
+import datetime
 import os.path as pa
 from flask import json
 from flask import Flask
 from flask import request
-import datetime
 
+from flask import jsonify
 
 year = datetime.date.today().year
 app = Flask(__name__)
