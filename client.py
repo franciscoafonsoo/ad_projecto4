@@ -64,6 +64,8 @@ def checkinput():
 while True:
     msg = raw_input("Comando: ")
     msg = msg.split(" ")
+    
+    s = requests.session()
 
     if msg[0] in actions:
         try:
@@ -89,7 +91,7 @@ while True:
 
                 print data
 
-                stuff = requests.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
+                stuff = s.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
                 response = json.loads(stuff.text)
                 rows = response[0].keys()
                 for i in rows:
@@ -122,7 +124,7 @@ while True:
 
                 print data
 
-                stuff = requests.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
+                stuff = s.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
                 response = json.loads(stuff.text)
                 pprint.pprint(response)
 
@@ -139,7 +141,7 @@ while True:
 
                 print data
 
-                stuff = requests.post("http://localhost:5000/inscricoes", json=json.dumps(data))
+                stuff = s.post("http://localhost:5000/inscricoes", json=json.dumps(data))
                 response = json.loads(stuff.text)
                 pprint.pprint(response)
 
