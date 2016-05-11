@@ -64,7 +64,7 @@ def checkinput():
 while True:
     msg = raw_input("Comando: ")
     msg = msg.split(" ")
-    
+
     s = requests.session()
 
     if msg[0] in actions:
