@@ -1,0 +1,73 @@
+Aplicar regras nas maquinas do lab DI.
+
+
+Ligações Permitidas INPUT:
+	
+	- icmp, only from local network (Mask:255.255.254.0)
+
+		$ sudo iptables
+
+	- ssh, only from gcc.alunos.di.fc.ul.pt (port 20?)
+
+		$ sudo iptables -A INPUT -s gcc.alunos.di.fc.ul.pt -p ssh -j ACCEPT
+
+	- clients from any ip (port 23457)
+		
+		$ sudo iptables -A INPUT -p tcp --dport 23457 -j ACCEPT
+
+
+Ligações Permitidas OUTPUT:
+
+	- icmp, only to gcc.alunos.di.fc.ul.pt
+
+		$ sudo iptables -OUTPUT -d gcc.alunos.di.fc.ul.pt -p icmp -j ACCEPT
+
+Testar seguintes ligações. Devem todas funcionar a seguir a aplicar as regras:
+
+	DCs: 10.101.253.11, 10.101.253.12, 10.101.253.13, 10.121.53.14, 10.121.53.15, 10.101.53.16
+	Storage: 10.101.249.63
+	Iate/Falua: 10.101.85.6, 10.101.85.138
+	Nemo: 10.101.85.18
+	Gateway: 10.101.148.1
+	Proxy: 10.101.85.134
+
+REGRAS, por esta ordem:
+
+	- ligações já estabelecida devem ser aceites:
+
+		$ sudo iptables –A INPUT –m state –-state ESTABLISHED,RELATED –j ACCEPT
+
+		$ sudo iptables –A OUTPUT –m state –-state ESTABLISHED,RELATED –j ACCEPT
+
+	- clientes de qualquer ip de entrada (port 23457):
+		
+		$ sudo iptables -A INPUT -p tcp --dport 23457 -j ssh
+	
+	- ACCEPT gcc.alunos.di.fc.ul.pt de entrada:
+
+		$ sudo iptables -A INPUT -s 10.101.151.5 -p ssh -j ACCEPT
+
+	- icmp gcc.alunos.di.fc.ul.pt de saida:
+
+		$ sudo iptables -A -OUTPUT -d 10.101.151.5 -p icmp -j ACCEPT
+
+	- acessos default das maquinas:
+		
+		$ sudo iptables -A INPUT -d 10.101.253.11, 10.101.253.12, 10.101.253.13, 10.121.53.14, 10.121.53.15, 10.101.53.16, 10.101.249.63, 10.101.85.6, 10.101.85.138, 10.101.85.18, 10.101.148.1, 10.101.85.134 -j ACCEPT
+
+	- nao filtrar trafego loopback (lo):
+	
+		$ sudo iptables –A INPUT –i lo –j ACCEPT
+	
+		$ sudo iptables –A OUTPUT –o lo –j ACCEPT
+
+
+	- politica fechada
+	
+		$ sudo iptables –j DROP
+
+
+
+
+
+
