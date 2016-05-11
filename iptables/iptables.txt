@@ -7,7 +7,7 @@ Ligações Permitidas INPUT:
 
 		$ sudo iptables -A INPUT -s 10.101.85.18 -p icmp -j ACCEPT
 
-	- ssh, only from local network (port 20?)
+	- ssh, only from local network (port 20?) (eu sei fazer isto, mas e complexo, vai ficar para ultimo)
 
 		$ sudo iptables -A INPUT -s <MASK> -p ssh -j ACCEPT
 
@@ -20,7 +20,6 @@ Ligações Permitidas INPUT:
 Ligações Permitidas OUTPUT:
 
 	- http server (port 80/443)
-	- icmp, only to gcc.alunos.di.fc.ul.pt
 
 		$ sudo iptables -OUTPUT -p tcp --dport 80 -j ACCEPT
 		$ sudo iptables -OUTPUT -p tcp --dport 443 -j ACCEPT
@@ -42,15 +41,20 @@ REGRAS, por esta ordem:
 
 		$ sudo iptables –A OUTPUT –m state –-state ESTABLISHED,RELATED –j ACCEPT
 
-	- clientes de qualquer ip de entrada (port 23457):
+	- clientes de qualquer ip de entrada e saida (port 80/443):
 		
-		$ sudo iptables -A INPUT -p tcp --dport 23457 -j ssh
+		$ sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+		$ sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+
+		$ sudo iptables -OUTPUT -p tcp --dport 80 -j ACCEPT
+		$ sudo iptables -OUTPUT -p tcp --dport 443 -j ACCEPT
+		
 	
-	- ACCEPT gcc.alunos.di.fc.ul.pt de entrada:
+	- ACCEPT ssh da rede local de entrada:
 
-		$ sudo iptables -A INPUT -s 10.101.151.5 -p ssh -j ACCEPT
+		$ sudo iptables -A INPUT -s <MASK> -p ssh -j ACCEPT
 
-	- icmp gcc.alunos.di.fc.ul.pt de saida:
+	- icmp nemo.alunos.di.fc.ul.pt de saida:
 
 		$ sudo iptables -A -OUTPUT -d 10.101.151.5 -p icmp -j ACCEPT
 
