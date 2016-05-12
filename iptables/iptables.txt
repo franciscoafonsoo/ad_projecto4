@@ -1,22 +1,10 @@
-Criar um script para aplicar as regras todas seguidas.
-
-
-Aplicar regras nas maquinas do lab DI. Maquina utilizada (ifconfig)
-
-ifconfig:
-	ip:
-	~
-
-
 Ligações Permitidas INPUT:
-	
+
+	- DNS
+
 	- icmp from nemo.alunos.di.fc.ul.pt
 
-		$ sudo iptables -A INPUT -s 10.101.85.18 -p icmp -j ACCEPT
-
 	- ssh, only from local network ((Mask:255.255.254.0 - 23 bits de idenficação da mask)
-
-		$ sudo iptables -A INPUT -s <ip da maquina>/23 -p ssh -j ACCEPT
 
 		é necessário identificar a mascara da sub-rede em bits para optimizar a performance do iptables. portanto:
 
@@ -24,20 +12,17 @@ Ligações Permitidas INPUT:
 
 			2. descobrir o bit 1 mais a direita, e contar para a esquerda.
 
-			3. conta-se o numero de bits e poe-se esse numero com uma barra a seguir ao ip da maquina da sub-rede utilizada
+			3. conta-se o numero de bits e põe-se esse numero com uma barra a seguir ao ip da maquina da sub-rede utilizada
 
-	- clients from any ip (port 80/443)
-	- verificar se é necessario ligacoes http
-		
-		$ sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+	- clients from any ip (port 443)
+
+	- como se usa ssl, só é necessário ligações na porta 443
 
 Ligações Permitidas OUTPUT:
 
-	- http server (port 80/443)
+	- DNS
 
-		$ sudo iptables -OUTPUT -p tcp --dport 443 -j ACCEPT
-
-Testar seguintes ligações. Devem todas funcionar a seguir a aplicar as regras:
+Ligações necessárias para o funcionamento das máquinas do lab:
 
 	DCs: 10.101.253.11, 10.101.253.12, 10.101.253.13, 10.121.53.14, 10.121.53.15, 10.101.53.16
 	Storage: 10.101.249.63
@@ -46,44 +31,48 @@ Testar seguintes ligações. Devem todas funcionar a seguir a aplicar as regras:
 	Gateway: 10.101.148.1
 	Proxy: 10.101.85.134
 
+
 REGRAS, por esta ordem:
 
 	- ligações já estabelecida devem ser aceites:
 
 		$ sudo iptables –A INPUT –m state –-state ESTABLISHED,RELATED –j ACCEPT
-
 		$ sudo iptables –A OUTPUT –m state –-state ESTABLISHED,RELATED –j ACCEPT
 
-	- clientes de qualquer ip de entrada e saida (port 80/443):
+	- DNS
+
+		$ sudo iptables -A INPUT -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT
+		$ sudo iptables -A INPUT -p tcp --sport 53 -m state --state ESTABLISHED -j ACCEPT
+		$ sudo iptables -A OUTPUT -p udp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+		$ sudo iptables -A OUTPUT -p tcp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+	- clientes de qualquer ip de entrada e saida (port 443):
 		
 		$ sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-
-		$ sudo iptables -OUTPUT -p tcp --dport 443 -j ACCEPT
+		$ sudo iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 		
-	
 	- ACCEPT ssh da rede local de entrada:
 
 		$ sudo iptables -A INPUT -s <ip da maquina>/23 -p ssh -j ACCEPT
 
 	- icmp nemo.alunos.di.fc.ul.pt de saida:
 
-		$ sudo iptables -A -OUTPUT -d 10.101.151.5 -p icmp -j ACCEPT
+		$ sudo iptables -A -OUTPUT -d nemo.alunos.di.fc.ul.pt -p icmp -j ACCEPT
 
 
 	- acessos default das maquinas:
 		
-		$ sudo iptables -A INPUT -d 10.101.253.11, 10.101.253.12, 10.101.253.13, 10.121.53.14, 10.121.53.15, 10.101.53.16, 10.101.249.63, 10.101.85.6, 10.101.85.138, 10.101.85.18, 10.101.148.1, 10.101.85.134 -j ACCEPT
+		$ sudo iptables -A INPUT -d "10.101.253.11, 10.101.253.12, 10.101.253.13, 10.121.53.14, 10.121.53.15, 10.101.53.16, 10.101.249.63, 10.101.85.6, 10.101.85.138, 10.101.85.18, 10.101.148.1, 10.101.85.134" -j ACCEPT
 
-		$ sudo iptables -A OUTPUT -d 10.101.253.11, 10.101.253.12, 10.101.253.13, 10.121.53.14, 10.121.53.15, 10.101.53.16, 10.101.249.63, 10.101.85.6, 10.101.85.138, 10.101.85.18, 10.101.148.1, 10.101.85.134 -j ACCEPT
+		$ sudo iptables -A OUTPUT -d "10.101.253.11, 10.101.253.12, 10.101.253.13, 10.121.53.14, 10.121.53.15, 10.101.53.16, 10.101.249.63, 10.101.85.6, 10.101.85.138, 10.101.85.18, 10.101.148.1, 10.101.85.134" -j ACCEPT
 
-	- nao filtrar trafego loopback (lo):
+	- não filtrar tráfego loopback (lo):
 	
 		$ sudo iptables –A INPUT –i lo –j ACCEPT
-	
 		$ sudo iptables –A OUTPUT –o lo –j ACCEPT
 
 
-	- logs antes de aplicar a politica fechada.
+	- logs antes de aplicar a política fechada. não aplicar logs nos testes.
 
 		$ sudo iptables -A INPUT  -j LOG  -m limit --limit 12/min --log-level 4 --log-prefix 'IP INPUT drop: '
 		$ sudo iptables -A INPUT  -j DROP
@@ -92,7 +81,62 @@ REGRAS, por esta ordem:
 		$ sudo iptables -A OUTPUT -j DROP
 
 
+Aplicar regras nas máquinas do lab DI. Registar e criar logs.
+
+EXEMPLO DE TESTE E OUTPUT (TEMPORÁRIO, SÃO OS RESULTADOS DAS REGRAS DE SEGURANÇA):
+
+Maquina utilizada:
+
+ifconfig:
+
+eth0      Link encap:Ethernet  HWaddr 3c:d9:2b:61:42:99  
+          inet addr:10.101.148.182  Bcast:10.101.151.255  Mask:255.255.252.0
+          inet6 addr: fe80::3ed9:2bff:fe61:4299/64 Scope:Link
+
+ip da maquina: 10.101.148.182
+
+List Iptables a seguir a aplicar as regras:
 
 
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+ACCEPT     icmp --  10.101.148.0/23      anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:23457
+ACCEPT     tcp  --  gcc.alunos.di.fc.ul.pt  anywhere             tcp dpt:ssh
+ACCEPT     all  --  anywhere             10.101.253.11       
+ACCEPT     all  --  anywhere             10.101.253.12       
+ACCEPT     all  --  anywhere             10.101.253.13       
+ACCEPT     all  --  anywhere             10.121.53.14        
+ACCEPT     all  --  anywhere             10.121.53.15        
+ACCEPT     all  --  anywhere             10.101.53.16        
+ACCEPT     all  --  anywhere             10.101.249.63       
+ACCEPT     all  --  anywhere             iate.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             falua.di.fc.ul.pt   
+ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             anywhere
+DROP       all  --  anywhere             anywhere            
 
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
 
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+ACCEPT     icmp --  anywhere             gcc.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             10.101.253.11       
+ACCEPT     all  --  anywhere             10.101.253.12       
+ACCEPT     all  --  anywhere             10.101.253.13       
+ACCEPT     all  --  anywhere             10.121.53.14        
+ACCEPT     all  --  anywhere             10.121.53.15        
+ACCEPT     all  --  anywhere             10.101.53.16        
+ACCEPT     all  --  anywhere             10.101.249.63       
+ACCEPT     all  --  anywhere             iate.di.fc.ul.pt    
+ACCEPT     all  --  anywhere             falua.di.fc.ul.pt   
+ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             anywhere            
+DROP       all  --  anywhere             anywhere  
