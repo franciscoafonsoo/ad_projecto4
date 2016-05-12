@@ -76,10 +76,12 @@ REGRAS, por esta ordem:
 		$ sudo iptables –A OUTPUT –o lo –j ACCEPT
 
 
-	- politica fechada
-	
-		$ sudo iptables -A INPUT –j DROP
+	- logs antes de aplicar a politica fechada.
 
+		$ sudo iptables -A INPUT  -j LOG  -m limit --limit 12/min --log-level 4 --log-prefix 'IP INPUT drop: '
+		$ sudo iptables -A INPUT  -j DROP
+
+		$ sudo iptables -A OUTPUT -j LOG  -m limit --limit 12/min --log-level 4 --log-prefix 'IP OUTPUT drop: '
 		$ sudo iptables -A OUTPUT -j DROP
 
 
