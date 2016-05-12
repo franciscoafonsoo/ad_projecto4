@@ -3,6 +3,7 @@ import sqlite3
 import queries
 import datetime
 import os.path as pa
+from OpenSSL import SSL
 from flask import json
 from flask import Flask
 from flask import request
@@ -12,6 +13,9 @@ year = datetime.date.today().year
 DATABASE = "aitd.bd"
 app = Flask(__name__)
 
+context = SSL.Context(SSL.SSLv23_METHOD)
+context.use_privatekey_file("ssl/server.key")
+context.use_certificate_file('/ssl/server.crt')
 
 def dict_factory(cursor, row):
     d = {}
@@ -263,4 +267,4 @@ def incricoes_api():
 if __name__ == '__main__':
     conndb, db = connect_db(DATABASE)
     app.debug = True
-    app.run()
+    app.run(ssl_context=context)

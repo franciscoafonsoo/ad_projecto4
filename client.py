@@ -91,7 +91,8 @@ while True:
 
                 print data
 
-                stuff = s.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data))
+                stuff = s.post("http://localhost:5000/" + categories[data["category"]], json=json.dumps(data),
+                               cert=('ssl/client.cert', 'ssl/client.key'))
                 response = json.loads(stuff.text)
                 rows = response[0].keys()
                 for i in rows:
