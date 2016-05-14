@@ -1,21 +1,25 @@
+import ssl
 import json
 import sqlite3
 import queries
 import datetime
 import os.path as pa
-from OpenSSL import SSL
 from flask import json
 from flask import Flask
 from flask import request
 from flask import jsonify
 
 year = datetime.date.today().year
-DATABASE = "aitd.bd"
+DATABASE = "database/aitd.bd"
 app = Flask(__name__)
 
-context = SSL.Context(SSL.SSLv23_METHOD)
-context.use_privatekey_file("ssl/server.key")
-context.use_certificate_file('/ssl/server.crt')
+
+ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+# ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+ctx.verify_mode = ssl.CERT_REQUIRED
+# ctx.check_hostname = True
+ctx.load_cert_chain('ssl/server.crt', 'ssl/server.key')
+ctx.load_verify_locations(cafile='ssl/root.pem')
 
 def dict_factory(cursor, row):
     d = {}
@@ -32,7 +36,7 @@ def connect_db(dbname):
     connection.row_factory = dict_factory
     cursor = connection.cursor()
     if not db_is_created:
-        cursor.executescript(open("tables.sql").read())
+        cursor.executescript(open("database/tables.sql").read())
         connection.commit()
     return connection, cursor
 
@@ -267,4 +271,5 @@ def incricoes_api():
 if __name__ == '__main__':
     conndb, db = connect_db(DATABASE)
     app.debug = True
-    app.run(ssl_context=context)
+    # app.run(threaded=True, ssl_context=('ssl/server.crt', 'ssl/server.key'))
+    app.run(threaded = True, ssl_context = ('ssl/server.crt', 'ssl/server.key'))
