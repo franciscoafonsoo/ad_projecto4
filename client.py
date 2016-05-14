@@ -9,6 +9,19 @@ Números de aluno: 44314, 43551, 44285
 import json
 import requests
 import pprint
+import urllib3
+
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.poolmanager import PoolManager
+
+urllib3.disable_warnings()
+# Never check any hostnames
+class HostNameIgnoringAdapter(HTTPAdapter):
+    def init_poolmanager(self, connections, maxsize, block=False):
+        self.poolmanager = PoolManager(num_pools=connections,
+                                       maxsize=maxsize,
+                                       block=block,
+                                       assert_hostname=False)
 
 actions = ["ADD", "REMOVE", "SHOW"]
 cat2 = ['ALUNOS', 'TURMAS', 'DISCIPLINAS']
@@ -93,6 +106,12 @@ while True:
 
                 stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
                     verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
+
+                #stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
+                #    verify='ssl/root.pem')
+
+                # stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data))
+
                 response = json.loads(stuff.text)
                 rows = response[0].keys()
                 for i in rows:
@@ -127,6 +146,11 @@ while True:
 
                 stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
                     verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
+
+                # stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
+                #    verify='ssl/root.pem')
+
+                # stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data))
                 response = json.loads(stuff.text)
                 pprint.pprint(response)
 
@@ -145,6 +169,11 @@ while True:
 
                 stuff = s.post("https://localhost:5000/inscricoes", json=json.dumps(data),
                     verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
+
+                #stuff = s.post("https://localhost:5000/inscricoes", json=json.dumps(data),
+                #    verify='ssl/root.pem')
+
+                # stuff = s.post("https://localhost:5000/inscricoes", json=json.dumps(data))
                 response = json.loads(stuff.text)
                 pprint.pprint(response)
 
