@@ -11,17 +11,7 @@ import requests
 import pprint
 import urllib3
 
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.poolmanager import PoolManager
-
 urllib3.disable_warnings()
-# Never check any hostnames
-class HostNameIgnoringAdapter(HTTPAdapter):
-    def init_poolmanager(self, connections, maxsize, block=False):
-        self.poolmanager = PoolManager(num_pools=connections,
-                                       maxsize=maxsize,
-                                       block=block,
-                                       assert_hostname=False)
 
 actions = ["ADD", "REMOVE", "SHOW"]
 cat2 = ['ALUNOS', 'TURMAS', 'DISCIPLINAS']
