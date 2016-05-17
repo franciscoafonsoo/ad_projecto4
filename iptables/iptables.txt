@@ -62,21 +62,23 @@ REGRAS, por esta ordem:
 				ip remoto(client): 192.168.43.149
 
 				sub-rede: 255.255.255.0
-"
-				Last login: Mon May 16 20:09:18 on ttys000
 
-				$ ssh sherby@192.168.43.151
-				sherby@192.168.43.151's password:
-				Welcome to Ubuntu 16.04 LTS (GNU/Linux 4.4.0-22-generic x86_64)
+				Teste
+""
+""				Last login: Mon May 16 20:09:18 on ttys000
+""
+""				$ ssh sherby@192.168.43.151
+""				sherby@192.168.43.151's password:
+""				Welcome to Ubuntu 16.04 LTS (GNU/Linux 4.4.0-22-generic x86_64)
+""
+""				 * Documentation:  https://help.ubuntu.com/
+""
+""				0 packages can be updated.
+""				0 updates are security updates.
+""
+""				Last login: Mon May 16 20:17:25 2016 from 192.168.43.149
+""				$  ~
 
-				 * Documentation:  https://help.ubuntu.com/
-
-				0 packages can be updated.
-				0 updates are security updates.
-
-				Last login: Mon May 16 20:17:25 2016 from 192.168.43.149
-				$  ~
-"
 
 	- icmp nemo.alunos.di.fc.ul.pt de saida:
 
@@ -91,7 +93,7 @@ REGRAS, por esta ordem:
 	- não filtrar tráfego loopback (lo):
 
 		$ sudo iptables -A INPUT -i lo -j ACCEPT
-		$ sudo iptables -A OUTPUT -i lo -j ACCEPT
+		$ sudo iptables -A OUTPUT -o lo -j ACCEPT
 
 
 	- logs antes de aplicar a política fechada. não aplicar logs nos testes.
