@@ -40,11 +40,6 @@ def connect_db(dbname):
     return connection, cursor
 
 
-# receive working, missing response
-
-# algumas queries ja implementadas e testadas. p.e ADD ALUNO (debug for now)
-
-
 @app.route("/alunos", methods=["POST"])
 def alunos_api():
 
@@ -270,5 +265,4 @@ def incricoes_api():
 if __name__ == '__main__':
     conndb, db = connect_db(DATABASE)
     app.debug = True
-    # app.run(threaded=True, ssl_context=('ssl/server.crt', 'ssl/server.key'))
     app.run(threaded = True, ssl_context = ('ssl/server.crt', 'ssl/server.key'))

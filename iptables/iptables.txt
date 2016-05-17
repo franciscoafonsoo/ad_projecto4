@@ -1,10 +1,10 @@
 Ligações Permitidas INPUT:
 
-	- DNS
+	- lookups de DNS
 
 	- icmp from nemo.alunos.di.fc.ul.pt
 
-	- ssh, only from local network ((Mask:255.255.254.0 - 23 bits de idenficação da mask)
+	- ssh, only from local network ((Mask:255.255.255.0 - 24 bits de idenficação da mask)
 
 		é necessário identificar a mascara da sub-rede em bits para optimizar a performance do iptables. portanto:
 
@@ -36,10 +36,10 @@ REGRAS, por esta ordem:
 
 	- ligações já estabelecida devem ser aceites:
 
-		$ sudo iptables –A INPUT –m state –-state ESTABLISHED,RELATED –j ACCEPT
-		$ sudo iptables –A OUTPUT –m state –-state ESTABLISHED,RELATED –j ACCEPT
+		$ sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+		$ sudo iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-	- DNS
+	- A maquina pode fazer "lookups DNS"
 
 		$ sudo iptables -A INPUT -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT
 		$ sudo iptables -A INPUT -p tcp --sport 53 -m state --state ESTABLISHED -j ACCEPT
@@ -47,29 +47,51 @@ REGRAS, por esta ordem:
 		$ sudo iptables -A OUTPUT -p tcp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 	- clientes de qualquer ip de entrada e saida (port 443):
-		
+
 		$ sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
 		$ sudo iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
-		
-	- ACCEPT ssh da rede local de entrada:
 
-		$ sudo iptables -A INPUT -s <ip da maquina>/23 -p ssh -j ACCEPT
+	- Aceita ligações ssh da rede local de entrada:
+
+		$ sudo iptables -A INPUT -s <ip da maquina local>/24 -p ssh -j ACCEPT
+
+			para testes:
+
+				ip local(server): 192.168.43.151
+
+				ip remoto(client): 192.168.43.149
+
+				sub-rede: 255.255.255.0
+"
+				Last login: Mon May 16 20:09:18 on ttys000
+
+				$ ssh sherby@192.168.43.151
+				sherby@192.168.43.151's password:
+				Welcome to Ubuntu 16.04 LTS (GNU/Linux 4.4.0-22-generic x86_64)
+
+				 * Documentation:  https://help.ubuntu.com/
+
+				0 packages can be updated.
+				0 updates are security updates.
+
+				Last login: Mon May 16 20:17:25 2016 from 192.168.43.149
+				$  ~
+"
 
 	- icmp nemo.alunos.di.fc.ul.pt de saida:
 
 		$ sudo iptables -A -OUTPUT -d nemo.alunos.di.fc.ul.pt -p icmp -j ACCEPT
 
-
 	- acessos default das maquinas:
-		
+
 		$ sudo iptables -A INPUT -d "10.101.253.11, 10.101.253.12, 10.101.253.13, 10.121.53.14, 10.121.53.15, 10.101.53.16, 10.101.249.63, 10.101.85.6, 10.101.85.138, 10.101.85.18, 10.101.148.1, 10.101.85.134" -j ACCEPT
 
 		$ sudo iptables -A OUTPUT -d "10.101.253.11, 10.101.253.12, 10.101.253.13, 10.121.53.14, 10.121.53.15, 10.101.53.16, 10.101.249.63, 10.101.85.6, 10.101.85.138, 10.101.85.18, 10.101.148.1, 10.101.85.134" -j ACCEPT
 
 	- não filtrar tráfego loopback (lo):
-	
-		$ sudo iptables –A INPUT –i lo –j ACCEPT
-		$ sudo iptables –A OUTPUT –o lo –j ACCEPT
+
+		$ sudo iptables -A INPUT -i lo -j ACCEPT
+		$ sudo iptables -A OUTPUT -i lo -j ACCEPT
 
 
 	- logs antes de aplicar a política fechada. não aplicar logs nos testes.
@@ -89,7 +111,7 @@ Maquina utilizada:
 
 ifconfig:
 
-eth0      Link encap:Ethernet  HWaddr 3c:d9:2b:61:42:99  
+eth0      Link encap:Ethernet  HWaddr 3c:d9:2b:61:42:99
           inet addr:10.101.148.182  Bcast:10.101.151.255  Mask:255.255.252.0
           inet6 addr: fe80::3ed9:2bff:fe61:4299/64 Scope:Link
 
@@ -99,44 +121,44 @@ List Iptables a seguir a aplicar as regras:
 
 
 Chain INPUT (policy ACCEPT)
-target     prot opt source               destination         
+target     prot opt source               destination
 ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
-ACCEPT     icmp --  10.101.148.0/23      anywhere            
+ACCEPT     icmp --  10.101.148.0/23      anywhere
 ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:23457
 ACCEPT     tcp  --  gcc.alunos.di.fc.ul.pt  anywhere             tcp dpt:ssh
-ACCEPT     all  --  anywhere             10.101.253.11       
-ACCEPT     all  --  anywhere             10.101.253.12       
-ACCEPT     all  --  anywhere             10.101.253.13       
-ACCEPT     all  --  anywhere             10.121.53.14        
-ACCEPT     all  --  anywhere             10.121.53.15        
-ACCEPT     all  --  anywhere             10.101.53.16        
-ACCEPT     all  --  anywhere             10.101.249.63       
-ACCEPT     all  --  anywhere             iate.alunos.di.fc.ul.pt 
-ACCEPT     all  --  anywhere             falua.di.fc.ul.pt   
-ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt 
-ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt 
-ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             10.101.253.11
+ACCEPT     all  --  anywhere             10.101.253.12
+ACCEPT     all  --  anywhere             10.101.253.13
+ACCEPT     all  --  anywhere             10.121.53.14
+ACCEPT     all  --  anywhere             10.121.53.15
+ACCEPT     all  --  anywhere             10.101.53.16
+ACCEPT     all  --  anywhere             10.101.249.63
+ACCEPT     all  --  anywhere             iate.alunos.di.fc.ul.pt
+ACCEPT     all  --  anywhere             falua.di.fc.ul.pt
+ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt
+ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt
+ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt
 ACCEPT     all  --  anywhere             anywhere
-DROP       all  --  anywhere             anywhere            
+DROP       all  --  anywhere             anywhere
 
 Chain FORWARD (policy ACCEPT)
-target     prot opt source               destination         
+target     prot opt source               destination
 
 Chain OUTPUT (policy ACCEPT)
-target     prot opt source               destination         
+target     prot opt source               destination
 ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
-ACCEPT     icmp --  anywhere             gcc.alunos.di.fc.ul.pt 
-ACCEPT     all  --  anywhere             10.101.253.11       
-ACCEPT     all  --  anywhere             10.101.253.12       
-ACCEPT     all  --  anywhere             10.101.253.13       
-ACCEPT     all  --  anywhere             10.121.53.14        
-ACCEPT     all  --  anywhere             10.121.53.15        
-ACCEPT     all  --  anywhere             10.101.53.16        
-ACCEPT     all  --  anywhere             10.101.249.63       
-ACCEPT     all  --  anywhere             iate.di.fc.ul.pt    
-ACCEPT     all  --  anywhere             falua.di.fc.ul.pt   
-ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt 
-ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt 
-ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt 
-ACCEPT     all  --  anywhere             anywhere            
-DROP       all  --  anywhere             anywhere  
+ACCEPT     icmp --  anywhere             gcc.alunos.di.fc.ul.pt
+ACCEPT     all  --  anywhere             10.101.253.11
+ACCEPT     all  --  anywhere             10.101.253.12
+ACCEPT     all  --  anywhere             10.101.253.13
+ACCEPT     all  --  anywhere             10.121.53.14
+ACCEPT     all  --  anywhere             10.121.53.15
+ACCEPT     all  --  anywhere             10.101.53.16
+ACCEPT     all  --  anywhere             10.101.249.63
+ACCEPT     all  --  anywhere             iate.di.fc.ul.pt
+ACCEPT     all  --  anywhere             falua.di.fc.ul.pt
+ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt
+ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt
+ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt
+ACCEPT     all  --  anywhere             anywhere
+DROP       all  --  anywhere             anywhere

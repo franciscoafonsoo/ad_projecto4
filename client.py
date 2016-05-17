@@ -97,11 +97,6 @@ while True:
                 stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
                     verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
 
-                #stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
-                #    verify='ssl/root.pem')
-
-                # stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data))
-
                 response = json.loads(stuff.text)
                 rows = response[0].keys()
                 for i in rows:
@@ -137,10 +132,6 @@ while True:
                 stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
                     verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
 
-                # stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
-                #    verify='ssl/root.pem')
-
-                # stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data))
                 response = json.loads(stuff.text)
                 pprint.pprint(response)
 
@@ -160,10 +151,6 @@ while True:
                 stuff = s.post("https://localhost:5000/inscricoes", json=json.dumps(data),
                     verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
 
-                #stuff = s.post("https://localhost:5000/inscricoes", json=json.dumps(data),
-                #    verify='ssl/root.pem')
-
-                # stuff = s.post("https://localhost:5000/inscricoes", json=json.dumps(data))
                 response = json.loads(stuff.text)
                 pprint.pprint(response)
 
