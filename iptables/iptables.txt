@@ -107,60 +107,60 @@ REGRAS, por esta ordem:
 
 Aplicar regras nas máquinas do lab DI. Registar e criar logs.
 
-EXEMPLO DE TESTE E OUTPUT (TEMPORÁRIO, SÃO OS RESULTADOS DAS REGRAS DE SEGURANÇA):
 
 Maquina utilizada:
 
 ifconfig:
 
-eth0      Link encap:Ethernet  HWaddr 3c:d9:2b:61:42:99
-          inet addr:10.101.148.182  Bcast:10.101.151.255  Mask:255.255.252.0
-          inet6 addr: fe80::3ed9:2bff:fe61:4299/64 Scope:Link
+eth0      Link encap:Ethernet  HWaddr 64:00:6a:08:8c:f4  
+          inet addr:10.101.148.4  Bcast:10.101.151.255  Mask:255.255.252.0
+          inet6 addr: fe80::6600:6aff:fe08:8cf4/64 Scope:Link
 
-ip da maquina: 10.101.148.182
+ip da maquina: 10.101.148.4
 
 List Iptables a seguir a aplicar as regras:
 
 
 Chain INPUT (policy ACCEPT)
-target     prot opt source               destination
+target     prot opt source               destination         
 ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
-ACCEPT     icmp --  10.101.148.0/23      anywhere
-ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:23457
-ACCEPT     tcp  --  gcc.alunos.di.fc.ul.pt  anywhere             tcp dpt:ssh
-ACCEPT     all  --  anywhere             10.101.253.11
-ACCEPT     all  --  anywhere             10.101.253.12
-ACCEPT     all  --  anywhere             10.101.253.13
-ACCEPT     all  --  anywhere             10.121.53.14
-ACCEPT     all  --  anywhere             10.121.53.15
-ACCEPT     all  --  anywhere             10.101.53.16
-ACCEPT     all  --  anywhere             10.101.249.63
-ACCEPT     all  --  anywhere             iate.alunos.di.fc.ul.pt
-ACCEPT     all  --  anywhere             falua.di.fc.ul.pt
-ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt
-ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt
-ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt
-ACCEPT     all  --  anywhere             anywhere
-DROP       all  --  anywhere             anywhere
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:https
+           all  --  10.101.148.0/22      anywhere            
+ACCEPT     all  --  anywhere             10.101.253.11       
+ACCEPT     all  --  anywhere             10.101.253.12       
+ACCEPT     all  --  anywhere             10.101.253.13       
+ACCEPT     all  --  anywhere             10.121.53.14        
+ACCEPT     all  --  anywhere             10.121.53.15        
+ACCEPT     all  --  anywhere             10.101.53.16        
+ACCEPT     all  --  anywhere             10.101.249.63       
+ACCEPT     all  --  anywhere             iate.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             falua.di.fc.ul.pt   
+ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             anywhere            
+DROP       all  --  anywhere             anywhere            
 
 Chain FORWARD (policy ACCEPT)
-target     prot opt source               destination
+target     prot opt source               destination         
 
 Chain OUTPUT (policy ACCEPT)
-target     prot opt source               destination
+target     prot opt source               destination         
 ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
-ACCEPT     icmp --  anywhere             gcc.alunos.di.fc.ul.pt
-ACCEPT     all  --  anywhere             10.101.253.11
-ACCEPT     all  --  anywhere             10.101.253.12
-ACCEPT     all  --  anywhere             10.101.253.13
-ACCEPT     all  --  anywhere             10.121.53.14
-ACCEPT     all  --  anywhere             10.121.53.15
-ACCEPT     all  --  anywhere             10.101.53.16
-ACCEPT     all  --  anywhere             10.101.249.63
-ACCEPT     all  --  anywhere             iate.di.fc.ul.pt
-ACCEPT     all  --  anywhere             falua.di.fc.ul.pt
-ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt
-ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt
-ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt
-ACCEPT     all  --  anywhere             anywhere
-DROP       all  --  anywhere             anywhere
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:https
+ACCEPT     icmp --  anywhere             nemo.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             10.101.253.11       
+ACCEPT     all  --  anywhere             10.101.253.12       
+ACCEPT     all  --  anywhere             10.101.253.13       
+ACCEPT     all  --  anywhere             10.121.53.14        
+ACCEPT     all  --  anywhere             10.121.53.15        
+ACCEPT     all  --  anywhere             10.101.53.16        
+ACCEPT     all  --  anywhere             10.101.249.63       
+ACCEPT     all  --  anywhere             iate.di.fc.ul.pt    
+ACCEPT     all  --  anywhere             falua.di.fc.ul.pt   
+ACCEPT     all  --  anywhere             nemo.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             submarino.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             farol.alunos.di.fc.ul.pt 
+ACCEPT     all  --  anywhere             anywhere            
+DROP       all  --  anywhere             anywhere  
+
