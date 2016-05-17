@@ -50,6 +50,11 @@ REGRAS, por esta ordem:
 
 		$ sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
 		$ sudo iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+		
+		Esta regra foi testada (tal como o ssh) numa rede local privada, e nao nas maquinas dos laboratorios do DI, visto que ao executar o codigo do projecto da o
+		seguinte erro:
+			"AttributeError: 'module' object has no attribute 'SSLContext'"
+		Tentamos ainda correr um simples servidor http na mesma porta (usando o modulo SimpleHTTPServer do python), que devolveu um erro de permissao negada.		
 
 	- Aceita ligações ssh da rede local de entrada:
 
