@@ -16,7 +16,7 @@ app = Flask(__name__)
 ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 # ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 ctx.verify_mode = ssl.CERT_REQUIRED
-ctx.check_hostname = False
+# ctx.check_hostname = False
 ctx.load_cert_chain('ssl/server.crt', 'ssl/server.key')
 ctx.load_verify_locations(cafile='ssl/root.pem')
 
