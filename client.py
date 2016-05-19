@@ -68,6 +68,11 @@ while True:
         msg = raw_input("Comando: ")
         msg = msg.split(" ")
 
+        if msg[0] == "EXIT" or msg[0] == "exit":
+            print ""
+            print "leaving..."
+            sys.exit()
+
         s = requests.session()
 
         if msg[0] in actions:
@@ -77,7 +82,7 @@ while True:
                     data = {"op": msg[0], "category": msg[1] + ' ' + msg[2]}
 
                     if len(msg) > 3:
-                        if msg[4].isdigit():
+                        if msg[3].isdigit():
                             pass
                         else:
                             print "5. parametros errados"
