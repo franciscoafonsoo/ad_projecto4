@@ -123,15 +123,23 @@ def turmas_api():
             print db.fetchone()
             conndb.commit()
             return json.dumps("OK")
+
         elif data["op"] == "REMOVE":
 
-            filtrar = [int(data["0"])]
+            filtrar = []
 
-            db.execute(queries.removeInscricaoForeignId["REMOVE TURMA INSCRICOES"], filtrar)
-            db.execute(queries.remove[query], filtrar)
-            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
-            conndb.commit()
-            return json.dumps("OK")
+            if "ALL" in data["category"].split(" ") and data.has_key("0"):
+                queryDic = queries.removeID
+            else:
+                queryDic = queries.remove
+            try:
+                filtrar = [int(data["0"])]
+            except:
+                queryDic = queries.removeAll
+            c = db.execute(queryDic[query], filtrar)
+            rquery = c.fetchall()
+            print rquery
+            return json.dumps(rquery)
 
         elif data["op"] == "SHOW":
 
