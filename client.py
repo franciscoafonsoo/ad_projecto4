@@ -10,7 +10,6 @@ import sys
 import json
 import requests
 import pprint
-import urllib3
 
 requests.packages.urllib3.disable_warnings()
 
@@ -99,14 +98,18 @@ while True:
                         verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
 
                     response = json.loads(stuff.text)
-                    rows = response[0].keys()
-                    for i in rows:
-                        print i + ", ",
-                    print " "
-                    for a in response:
-                        for b in a.values():
-                            print str(b) + ", ",
+
+                    try:
+                        rows = response[0].keys()
+                        for i in rows:
+                            print i + ", ",
                         print " "
+                        for a in response:
+                            for b in a.values():
+                                print str(b) + ", ",
+                            print " "
+                    except:
+                        print "Resposta Vazia"
 
                 elif msg[1] in categories.keys():
 

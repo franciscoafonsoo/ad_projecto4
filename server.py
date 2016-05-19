@@ -13,8 +13,8 @@ year = datetime.date.today().year
 DATABASE = "database/aitd.bd"
 app = Flask(__name__)
 
-ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-# ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+#ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 ctx.verify_mode = ssl.CERT_REQUIRED
 # ctx.check_hostname = False
 ctx.load_cert_chain('ssl/server.crt', 'ssl/server.key')
@@ -75,22 +75,21 @@ def alunos_api():
             return json.dumps("OK")
 
         elif data["op"] == "SHOW":
-
-            if data["0"] == "DISCIPLINA":
-                queryall = "SHOW ALL ALUNOS DISCIPLINA"
-            elif data["0"] == "TURMA":
-                queryall = "SHOW ALL ALUNOS TURMA"
-
+            cai=True;
             filtrar = []
-            if "ALL" in data["category"].split(" ") and data.has_key("0"):
+            if "ALL" in data["category"].split(" ") and data.has_key("1"):
                 queryDic = queries.showAllID
+                query=query+ " " +data["0"]
+                filtrar = [int(data["1"])]
+                cai=False;
             else:
                 queryDic = queries.showID
             try:
                 filtrar = [int(data["0"])]
             except:
-                queryDic = queries.show
-            c = db.execute(queryDic[queryall], filtrar)
+                if cai:
+                    queryDic = queries.show
+            c = db.execute(queryDic[query], filtrar)
             rquery = c.fetchall()
             print rquery
             return json.dumps(rquery)
@@ -138,9 +137,6 @@ def turmas_api():
 
             filtrar = []
 
-            if data["0"] == "DISCIPLINA":
-                queryall = "SHOW ALL TURMAS"
-
             if "ALL" in data["category"].split(" ") and data.has_key("0"):
                 queryDic = queries.showAllID
             else:
@@ -149,7 +145,7 @@ def turmas_api():
                 filtrar = [int(data["0"])]
             except:
                 queryDic = queries.show
-            c = db.execute(queryDic[queryall], filtrar)
+            c = db.execute(queryDic[query], filtrar)
             rquery = c.fetchall()
             print rquery
             return json.dumps(rquery)
