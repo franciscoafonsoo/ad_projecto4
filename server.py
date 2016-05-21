@@ -38,10 +38,12 @@ def connect_db(dbname):
     db_is_created = pa.isfile(dbname)
 
     connection = sqlite3.connect(dbname, check_same_thread=False)
+
     connection.row_factory = dict_factory
     cursor = connection.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON;")
     if not db_is_created:
-        cursor.executescript(open("database/tables.sql").read())
+        cursor.executescript(open("tables.sql").read())
         connection.commit()
     return connection, cursor
 
@@ -244,35 +246,35 @@ def incricoes_api():
         print
         print data
 
-        try:
-            query = str(data["op"])
+        #try:
+        query = str(data["op"])
 
-            # print "test"
+        # print "test"
 
-            filtrar = [str(data["0"]), str(data["1"])]
+        filtrar = [str(data["0"]), str(data["1"])]
 
-            if data["op"] == "ADD":
-                fquery = queries.add[query]
-                filtrar.append(year)
-                resp = 'OK'
-            elif data["op"] == "REMOVE":
-                fquery = queries.removeID[query]
-                resp = 'OK'
-            elif data["op"] == "SHOW":
-                fquery = queries.showID[query]
-                db.execute(fquery, filtrar)
-                if bool(db.fetchone()['COUNT(*)']):
-                    resp = 'Esta Inscrito'
-                else:
-                    resp = 'Nao esta inscrito'
+        if data["op"] == "ADD":
+            fquery = queries.add[query]
+            filtrar.append(year)
+            resp = 'OK'
+        elif data["op"] == "REMOVE":
+            fquery = queries.removeID[query]
+            resp = 'OK'
+        elif data["op"] == "SHOW":
+            fquery = queries.showID[query]
             db.execute(fquery, filtrar)
-            print db.fetchone()
-            conndb.commit()
-            return json.dumps(resp)
-        except:
-            resp = jsonify(resposta="NOK")
-            resp.status_code = 400
-            return resp
+            if bool(db.fetchone()['COUNT(*)']):
+                resp = 'Esta Inscrito'
+            else:
+                resp = 'Nao esta inscrito'
+        db.execute(fquery, filtrar)
+        print db.fetchone()
+        conndb.commit()
+        return json.dumps(resp)
+        #except:
+         #   resp = jsonify(resposta="NOK")
+          ##  resp.status_code = 400
+            #return resp
 
 
 if __name__ == '__main__':

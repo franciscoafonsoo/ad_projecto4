@@ -49,10 +49,10 @@ removeAll = {
 }
 
 removeID = {
-    "REMOVE ALL ALUNOS TURMA": "DELETE FROM alunos where (SELECT * FROM alunos JOIN inscricoes WHERE alunos.id = inscricoes.id_aluno and inscricoes.id_turma = ?);",
-    "REMOVE ALL ALUNOS DISCIPLINAS": "DELETE FROM alunos WHERE (SELECT * FROM alunos join inscricoes where alunos.id = inscricoes.id_aluno and inscricoes.id_turma=(SELECT id_turma from turma where id_disciplina=?));",
-    "REMOVE ALL TURMAS DISCIPLINAS": "DELETE FROM turma WHERE (SELECT id from turma where id_disciplina=?);",
-    "REMOVE": "DELETE FROM inscricoes WHERE(SELECT * FROM inscricoes where inscricoes.id_aluno=? and inscricoes.id_turma=?);"
+    "REMOVE ALL ALUNOS TURMA": "DELETE FROM alunos where id IN(SELECT id FROM alunos INNER JOIN inscricoes WHERE alunos.id = inscricoes.id_aluno and inscricoes.id_turma = ?);",
+    "REMOVE ALL ALUNOS DISCIPLINAS": "DELETE FROM alunos WHERE id IN (SELECT id FROM alunos Inner join inscricoes where alunos.id = inscricoes.id_aluno and inscricoes.id_turma=(SELECT id_turma from turma where id_disciplina=?));",
+    "REMOVE ALL TURMAS DISCIPLINAS": "DELETE FROM turma WHERE id_disciplina=?);",
+    "REMOVE": "DELETE FROM inscricoes where id_aluno=? and inscricoes.id_turma=?;"
 }
 
 removedisciplinas = [

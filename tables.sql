@@ -22,6 +22,7 @@ CREATE TABLE turma (
 CREATE TABLE inscricoes (
     id_aluno INTEGER,
     id_turma INTEGER,
+    ano_letivo INTEGER,
     PRIMARY KEY (id_aluno, id_turma),
     FOREIGN KEY(id_aluno) REFERENCES alunos(id) ON DELETE CASCADE,
     FOREIGN KEY(id_turma) REFERENCES turma(id) ON DELETE CASCADE);

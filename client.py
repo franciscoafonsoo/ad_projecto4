@@ -107,7 +107,7 @@ while True:
                                    verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
 
                     response = json.loads(stuff.text)
-
+                    print response
                     try:
                         rows = response[0].keys()
                         for i in rows:
@@ -169,7 +169,7 @@ while True:
 
                     response = json.loads(stuff.text)
                     pprint.pprint(response)
-                    print "HTTP status_code:" + stuff.status_code
+                    print "HTTP status_code:" + str(stuff.status_code)
 
             #except (ValueError, IndexError):
             #    print "6. parametros incorrectos"
