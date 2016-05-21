@@ -76,27 +76,31 @@ while True:
         s = requests.session()
 
         if msg[0] in actions:
-            try:
+            #try:
                 if 'ALL' in msg and msg[2] in cat2:
 
                     data = {"op": msg[0], "category": msg[1] + ' ' + msg[2]}
 
                     if len(msg) > 3:
-                        if msg[3].isdigit():
+                        if msg[4].isdigit():
                             pass
                         else:
                             print "5. parametros errados"
                             continue
 
+                    print msg
+
                     msg.pop(0)
                     msg.pop(0)
                     msg.pop(0)
+
+                    print msg
 
                     i = 0
                     for index, command in enumerate(msg):
                         data[i] = msg[index]
                         i += 1
-
+                    print "stuff"
                     print data
 
                     stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
@@ -128,8 +132,10 @@ while True:
                         else:
                             continue
 
+                    print msg
                     msg.pop(0)
                     msg.pop(0)
+                    print msg
 
                     i = 0
                     for index, command in enumerate(msg):
@@ -165,8 +171,8 @@ while True:
                     pprint.pprint(response)
                     print "HTTP status_code:" + stuff.status_code
 
-            except (ValueError, IndexError):
-                print "6. parametros incorrectos"
+            #except (ValueError, IndexError):
+            #    print "6. parametros incorrectos"
 
         else:
             print "Action not supported!"

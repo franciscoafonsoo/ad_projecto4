@@ -64,16 +64,19 @@ def alunos_api():
             conndb.commit()
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
+            if "ALL" in data["category"].split(" "):
+                if data["0"] == "DISCIPLINA":
+                    filtrar = int(data["1"])
+                    db.execute(queries.removeID["REMOVE ALL ALUNOS DISCIPLINAS"], [filtrar])
 
-            # if data["0"] == "DISCIPLINA":
-            #     queryall = "SHOW ALL ALUNOS DISCIPLINA"
-            # elif data["0"] == "TURMA":
-            #     queryall = "SHOW ALL ALUNOS TURMA"
-
-            filtrar = [int(data["0"])]
-
-            db.execute(queries.remove["REMOVE ALUNO INSCRICOES"], filtrar)
-            db.execute(queries.remove[query], filtrar)
+                elif data["0"] == "TURMA":
+                    filtrar = int(data["1"])
+                    db.execute(queries.removeID["REMOVE ALL ALUNOS TURMA"], [filtrar])
+                else:
+                    db.execute(queries.removeAll["REMOVE ALL ALUNOS"])
+            else:
+                filtrar = [int(data["0"])]
+                db.execute(queries.remove["REMOVE ALUNO"], filtrar)
 
             # db.execute(queries.inscricoes[queryall], filtrar)
             # db.execute(queries.remove[queryall], filtrar)
@@ -132,14 +135,16 @@ def turmas_api():
             conndb.commit()
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
+            if "ALL" in data["category"].split(" "):
+                if data.has_key("0"):
+                    filtrar = int(data['0'])
+                    db.execute(queries.removeID["REMOVE ALL TURMAS DISCIPLINAS"], [filtrar])
+                else:
+                    db.execute(queries.removeAll["REMOVE ALL TURMAS"])
+            else:
+                filtrar = [int(data["0"])]
+                db.execute(queries.remove["REMOVE TURMA"], filtrar)
 
-            filtrar = [int(data["0"])]
-
-            if "ALL" in data["category"].split(" ") and data.has_key("1"):
-                pass
-            db.execute(queries.removeInscricaoForeignId["REMOVE TURMA INSCRICOES"], filtrar)
-            db.execute(queries.remove[query], filtrar)
-            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
             conndb.commit()
             return json.dumps("OK")
 
@@ -190,16 +195,11 @@ def disciplinas_api():
             conndb.commit()
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
-
-            if "ALL" in data["category"].split(" ") and data.has_key("1"):
-                pass
-            filtrar = [int(data["0"])]
-            db.execute(queries.removedisciplinas[0], filtrar)
-            temp1 = db.fetchall()
-            for turma in temp1:
-                db.execute(queries.removedisciplinas[1], [turma["id"]])
-                db.execute(queries.removedisciplinas[2], [turma["id"]])
-            db.execute(queries.removedisciplinas[3], [filtrar[0]])
+            if "ALL" in data["category"].split(" "):
+                db.execute(queries.removeAll["REMOVE ALL DISCIPLINAS"])
+            else:
+                filtrar = [int(data["0"])]
+                db.execute(queries.remove["REMOVE DISCIPLINA"], filtrar)
             conndb.commit()
 
             # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
@@ -208,7 +208,6 @@ def disciplinas_api():
             # conndb.commit()
 
             return json.dumps("OK")
-
 
         elif data["op"] == "SHOW":
             filtrar = []
