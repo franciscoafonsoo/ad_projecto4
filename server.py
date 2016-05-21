@@ -102,14 +102,14 @@ def alunos_api():
             return json.dumps(rquery)
 
         else:
-            resp = jsonify("Verificar Pedidos")
+            resp = jsonify(resposta="Verificar Pedidos")
             resp.status_code = 400
             return resp
 
             # json.dumps("operation: invalid")
 
     else:
-        resp = jsonify("Verificar Pedidos")
+        resp = jsonify(resposta="Verificar Pedidos")
         resp.status_code = 400
         return resp
 
@@ -160,12 +160,12 @@ def turmas_api():
 
 
         else:
-            resp = jsonify("Verificar Pedidos")
+            resp = jsonify(resposta="Verificar Pedidos")
             resp.status_code = 400
             return resp
 
     else:
-        resp = jsonify("Verificar Pedidos")
+        resp = jsonify(resposta="Verificar Pedidos")
         resp.status_code = 400
         return resp
 
@@ -221,12 +221,12 @@ def disciplinas_api():
             return json.dumps(rquery)
 
         else:
-            resp = jsonify("Verificar Pedidos")
+            resp = jsonify(resposta="Verificar Pedidos")
             resp.status_code = 400
             return resp
 
     else:
-        resp = jsonify("Verificar Pedidos")
+        resp = jsonify(resposta="Verificar Pedidos")
         resp.status_code = 400
         return resp
 
@@ -266,7 +266,7 @@ def incricoes_api():
             conndb.commit()
             return json.dumps(resp)
         except:
-            resp = jsonify("NOK")
+            resp = jsonify(resposta="NOK")
             resp.status_code = 400
             return resp
 
