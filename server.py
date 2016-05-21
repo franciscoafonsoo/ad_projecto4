@@ -1,24 +1,30 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+Aplicações distribuídas - Projeto 4 - servidor flask
+Grupo: 25
+Números de aluno: 44314, 43551, 44285
+"""
+
 import ssl
 import json
 import sqlite3
 import queries
 import datetime
 import os.path as pa
-from flask import json
-from flask import Flask
-from flask import request
-from flask import jsonify
+from flask import json, Flask, request, jsonify
+
 
 year = datetime.date.today().year
 DATABASE = "database/aitd.bd"
 app = Flask(__name__)
 
-#ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+# ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 ctx.verify_mode = ssl.CERT_REQUIRED
-# ctx.check_hostname = False
 ctx.load_cert_chain('ssl/server.crt', 'ssl/server.key')
 ctx.load_verify_locations(cafile='ssl/root.pem')
+
 
 def dict_factory(cursor, row):
     d = {}
@@ -46,6 +52,7 @@ def alunos_api():
     if request.headers['Content-Type'] == 'application/json':
 
         data = json.loads(request.json)
+        print
         print data
 
         query = str(data["op"] + " " + data["category"])
@@ -53,7 +60,7 @@ def alunos_api():
         if data["op"] == "ADD":
             filtrar = [str(data["0"]), str(data["1"]), str(data["2"])]
             db.execute(queries.add[query], filtrar)
-            print db.fetchone()
+            # print db.fetchone()
             conndb.commit()
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
@@ -65,7 +72,7 @@ def alunos_api():
 
             filtrar = [int(data["0"])]
 
-            db.execute(queries.removeInscricaoForeignId["REMOVE ALUNO INSCRICOES"], filtrar)
+            db.execute(queries.remove["REMOVE ALUNO INSCRICOES"], filtrar)
             db.execute(queries.remove[query], filtrar)
 
             # db.execute(queries.inscricoes[queryall], filtrar)
@@ -75,13 +82,13 @@ def alunos_api():
             return json.dumps("OK")
 
         elif data["op"] == "SHOW":
-            cai=True;
+            cai = True
             filtrar = []
             if "ALL" in data["category"].split(" ") and data.has_key("1"):
                 queryDic = queries.showAllID
-                query=query+ " " +data["0"]
+                query = query + " " + data["0"]
                 filtrar = [int(data["1"])]
-                cai=False;
+                cai = False
             else:
                 queryDic = queries.showID
             try:
@@ -91,7 +98,7 @@ def alunos_api():
                     queryDic = queries.show
             c = db.execute(queryDic[query], filtrar)
             rquery = c.fetchall()
-            print rquery
+            # print rquery
             return json.dumps(rquery)
 
         else:
@@ -113,6 +120,7 @@ def turmas_api():
     if request.headers['Content-Type'] == 'application/json':
 
         data = json.loads(request.json)
+        print
         print data
 
         query = str(data["op"] + " " + data["category"])
@@ -120,26 +128,18 @@ def turmas_api():
         if data["op"] == "ADD":
             filtrar = [str(data["0"]), str(data["1"]), str(data["2"])]
             db.execute(queries.add[query], filtrar)
-            print db.fetchone()
+            # print db.fetchone()
             conndb.commit()
             return json.dumps("OK")
-
         elif data["op"] == "REMOVE":
 
-            filtrar = []
+            filtrar = [int(data["0"])]
 
-            if "ALL" in data["category"].split(" ") and data.has_key("0"):
-                queryDic = queries.removeID
-            else:
-                queryDic = queries.remove
-            try:
-                filtrar = [int(data["0"])]
-            except:
-                queryDic = queries.removeAll
-            c = db.execute(queryDic[query], filtrar)
-            rquery = c.fetchall()
-            print rquery
-            return json.dumps(rquery)
+            db.execute(queries.removeInscricaoForeignId["REMOVE TURMA INSCRICOES"], filtrar)
+            db.execute(queries.remove[query], filtrar)
+            # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
+            conndb.commit()
+            return json.dumps("OK")
 
         elif data["op"] == "SHOW":
 
@@ -155,7 +155,7 @@ def turmas_api():
                 queryDic = queries.show
             c = db.execute(queryDic[query], filtrar)
             rquery = c.fetchall()
-            print rquery
+            # print rquery
             return json.dumps(rquery)
 
 
@@ -172,9 +172,11 @@ def turmas_api():
 
 @app.route("/disciplinas", methods=["POST"])
 def disciplinas_api():
+
     if request.headers['Content-Type'] == 'application/json':
 
         data = json.loads(request.json)
+        print
         print data
 
         query = str(data["op"] + " " + data["category"])
@@ -182,7 +184,7 @@ def disciplinas_api():
         if data["op"] == "ADD":
             filtrar = [str(data["0"]), str(data["1"]), str(data["2"])]
             db.execute(queries.add[query], filtrar)
-            print db.fetchone()
+            # print db.fetchone()
             conndb.commit()
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
@@ -197,9 +199,9 @@ def disciplinas_api():
             conndb.commit()
 
             # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
-            #db.execute(queries.remove[query], filtrar)
-            #print db.fetchone()
-            #conndb.commit()
+            # db.execute(queries.remove[query], filtrar)
+            # print db.fetchone()
+            # conndb.commit()
 
             return json.dumps("OK")
 
@@ -215,7 +217,7 @@ def disciplinas_api():
                 queryDic = queries.show
             c = db.execute(queryDic[query], filtrar)
             rquery = c.fetchall()
-            print rquery
+            # print rquery
             return json.dumps(rquery)
 
         else:
@@ -233,7 +235,10 @@ def disciplinas_api():
 def incricoes_api():
 
     if request.headers['Content-Type'] == 'application/json':
+
         data = json.loads(request.json)
+        print
+        print data
 
         try:
             query = str(data["op"])
@@ -269,4 +274,5 @@ def incricoes_api():
 if __name__ == '__main__':
     conndb, db = connect_db(DATABASE)
     app.debug = True
-    app.run(threaded = True, ssl_context = ('ssl/server.crt', 'ssl/server.key'))
+    # app.run(threaded = True, ssl_context = ('ssl/server.crt', 'ssl/server.key'))
+    app.run(threaded=True, ssl_context=ctx)

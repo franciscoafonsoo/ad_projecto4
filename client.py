@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-Aplicações distribuídas - Projeto 1 - lock_client.py
+Aplicações distribuídas - Projeto 1 - client requests
 Grupo: 25
 Números de aluno: 44314, 43551, 44285
 """
@@ -45,14 +45,14 @@ def checkinput():
         if msg[3].isdigit():
             return True
         else:
-            print "3. parametros errados"
+            print "2. parametros errados"
             return False
 
     if data["category"] == "DISCIPLINA":
         if msg[2] in ano and msg[3] in semestre:
             return True
         else:
-            print "parametros errados"
+            print "3. parametros errados"
             return False
 
     if data["category"] == "TURMA":
@@ -97,10 +97,10 @@ while True:
                         data[i] = msg[index]
                         i += 1
 
-                    print data
+                    # print data
 
                     stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
-                        verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
+                                   verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
 
                     response = json.loads(stuff.text)
 
@@ -136,10 +136,10 @@ while True:
                         data[i] = msg[index]
                         i += 1
 
-                    print data
+                    # print data
 
                     stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
-                        verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
+                                   verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
 
                     response = json.loads(stuff.text)
                     pprint.pprint(response)
@@ -155,20 +155,20 @@ while True:
                         data[i] = msg[index]
                         i += 1
 
-                    print data
+                    # print data
 
                     stuff = s.post("https://localhost:5000/inscricoes", json=json.dumps(data),
-                        verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
+                                   verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
 
                     response = json.loads(stuff.text)
                     pprint.pprint(response)
 
-            except ValueError:
+            except (ValueError, IndexError):
                 print "6. parametros incorrectos"
 
         else:
             print "Action not supported!"
-            
+
     except KeyboardInterrupt:
         print ""
         print "leaving..."

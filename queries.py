@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-Aplicações distribuídas - Projeto 1 - lock_client.py
+Aplicações distribuídas - Projeto 4 - queries para manipular a bd
 Grupo: 25
 Números de aluno: 44314, 43551, 44285
 """
@@ -29,7 +29,7 @@ showAllID = {
     "SHOW ALL TURMAS": "SELECT id from turma where id_disciplina=?;",
 }
 
-show= {
+show = {
     "SHOW ALL ALUNOS": "SELECT * FROM alunos;",
     "SHOW ALL DISCIPLINAS": "SELECT * FROM disciplina;",
     "SHOW ALL TURMAS": "SELECT * FROM turma;"
@@ -39,6 +39,7 @@ remove = {
     "REMOVE ALUNO": "DELETE FROM alunos where alunos.id=?;",
     "REMOVE DISCIPLINA": "DELETE FROM disciplina where disciplina.id=?;",
     "REMOVE TURMA": "DELETE FROM turma where turma.id=?;",
+    "REMOVE ALUNO INSCRICOES": "DELETE FROM inscricoes WHERE id_aluno=?"
 }
 
 removeAll = {
