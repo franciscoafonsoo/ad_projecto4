@@ -135,6 +135,8 @@ def turmas_api():
 
             filtrar = [int(data["0"])]
 
+            if "ALL" in data["category"].split(" ") and data.has_key("1"):
+
             db.execute(queries.removeInscricaoForeignId["REMOVE TURMA INSCRICOES"], filtrar)
             db.execute(queries.remove[query], filtrar)
             # db.execute(queries.inscricoes["REMOVE ALUNO"], filtrar)
@@ -189,6 +191,8 @@ def disciplinas_api():
             return json.dumps("OK")
         elif data["op"] == "REMOVE":
 
+            if "ALL" in data["category"].split(" ") and data.has_key("1"):
+
             filtrar = [int(data["0"])]
             db.execute(queries.removedisciplinas[0], filtrar)
             temp1 = db.fetchall()
@@ -204,6 +208,7 @@ def disciplinas_api():
             # conndb.commit()
 
             return json.dumps("OK")
+
 
         elif data["op"] == "SHOW":
             filtrar = []
@@ -243,7 +248,7 @@ def incricoes_api():
         try:
             query = str(data["op"])
 
-            print "test"
+            # print "test"
 
             filtrar = [str(data["0"]), str(data["1"])]
 

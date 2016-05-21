@@ -97,7 +97,7 @@ while True:
                         data[i] = msg[index]
                         i += 1
 
-                    # print data
+                    print data
 
                     stuff = s.post('https://localhost:5000/' + categories[data['category']], json=json.dumps(data),
                                    verify='ssl/root.pem', cert=('ssl/client.crt', 'ssl/client.key'))
@@ -143,6 +143,7 @@ while True:
 
                     response = json.loads(stuff.text)
                     pprint.pprint(response)
+                    print stuff.status_code
 
                 elif type(int(msg[1])) is int and type(int(msg[2])) is int:
 
@@ -162,6 +163,7 @@ while True:
 
                     response = json.loads(stuff.text)
                     pprint.pprint(response)
+                    print "HTTP status_code:" + stuff.status_code
 
             except (ValueError, IndexError):
                 print "6. parametros incorrectos"
